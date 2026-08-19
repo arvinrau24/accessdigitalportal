@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard — AccessDigital</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/client-portal/public/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-dark navbar-expand-lg" style="background: var(--ad-primary);">
+    <div class="container">
+      <span class="navbar-brand" id="nav-company">Client Dashboard</span>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-light" onclick="goBack()">Back</button>
+        <button class="btn btn-sm btn-outline-light" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <div class="container py-4">
+    <ul class="nav nav-tabs mb-3" id="dashboard-tabs">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-onboarding">Onboarding Form</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-downloads">TNG & BANK Form</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-uploads">Upload Suporting Documents</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-status">Status</button></li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="tab-onboarding">
+        <div class="card p-4">
+          <form id="onboarding-form">
+            <div class="form-section-title">Company Information</div>
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label">Company Name *</label><input class="form-control" name="company_name" required></div>
+              <div class="col-md-6"><label class="form-label">Company Registration No. *</label><input class="form-control" name="company_registration_no" required></div>
+              <div class="col-12"><label class="form-label">Company Full Office Address *</label><textarea class="form-control" name="company_office_address" rows="2" required></textarea></div>
+              <div class="col-md-4"><label class="form-label">Company Tax Number</label><input class="form-control" name="company_tax_number"></div>
+              <div class="col-md-4"><label class="form-label">Company SSM No.</label><input class="form-control" name="company_ssm_no"></div>
+              <div class="col-md-4"><label class="form-label">Company SST No.</label><input class="form-control" name="company_sst_no"></div>
+            </div>
+
+            <div class="form-section-title">Car Park Site</div>
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label">Car Park Site Name *</label><input class="form-control" name="car_park_site_name" required></div>
+              <div class="col-12"><label class="form-label">Car Park Site Address *</label><textarea class="form-control" name="car_park_site_address" rows="2" required></textarea></div>
+              <div class="col-12">
+                <label class="form-label d-block">Type of Car Park *</label>
+                <select class="form-select" name="car_park_type" required>
+                  <option value="">Select...</option>
+                  <option>Open Site</option>
+                  <option>Office Building</option>
+                  <option>Commercial Building (Mall)</option>
+                  <option>Government Building</option>
+                  <option>Hospital</option>
+                </select>
+              </div>
+              <div class="col-md-4"><label class="form-label">No. of Entry</label><input class="form-control" name="no_of_entry"></div>
+              <div class="col-md-4"><label class="form-label">No. of Exit</label><input class="form-control" name="no_of_exit"></div>
+              <div class="col-md-4"><label class="form-label">No. of Zone</label><input class="form-control" name="no_of_zone"></div>
+              <div class="col-md-4"><label class="form-label">No. of Validator</label><input class="form-control" name="no_of_validator"></div>
+              <div class="col-md-4"><label class="form-label">No. of Parking Bays</label><input class="form-control" name="no_of_parking_bay"></div>
+            </div>
+
+            <div class="form-section-title">Authorized Person in Charge</div>
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label">Office: Name</label><input class="form-control" name="authorized_pic_office_name"></div>
+              <div class="col-md-6"><label class="form-label">Office: Contact</label><input class="form-control" name="authorized_pic_office_contact"></div>
+              <div class="col-md-6"><label class="form-label">Site: Name</label><input class="form-control" name="authorized_pic_site_name"></div>
+              <div class="col-md-6"><label class="form-label">Site: Contact</label><input class="form-control" name="authorized_pic_site_contact"></div>
+            </div>
+
+            <div class="form-section-title">Email & Banking</div>
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label">Authorized Email *</label><input type="email" class="form-control" name="authorized_email" required></div>
+              <div class="col-md-6"><label class="form-label">CC Email(s)</label><input class="form-control" name="authorized_email_cc"></div>
+              <div class="col-md-6"><label class="form-label">Bank Name *</label><input class="form-control" name="bank_name" required></div>
+              <div class="col-md-6"><label class="form-label">Bank Account Name *</label><input class="form-control" name="bank_account_name" required></div>
+              <div class="col-md-6"><label class="form-label">Bank Account No. *</label><input class="form-control" name="bank_account_number" required></div>
+              <div class="col-12"><label class="form-label">Bank Address</label><textarea class="form-control" name="bank_address" rows="2"></textarea></div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="primary_active_bank_account" value="1" id="primaryBank">
+                  <label class="form-check-label" for="primaryBank">Confirm this is the Primary & Active Bank Account</label>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Commercial Model</label>
+                <input class="form-control" id="commercial-mode-display" readonly>
+              </div>
+            </div>
+
+            <div class="form-section-title">Declaration</div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Authorized Signature *</label>
+                <canvas id="signature-pad" width="400" height="120"></canvas>
+                <div class="mt-2 d-flex gap-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-signature">Clear</button>
+                  <button type="button" class="btn btn-sm btn-outline-primary" id="save-signature">Save Signature</button>
+                </div>
+                <div class="form-text" id="signature-status">No signature saved yet.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Company Stamp</label>
+                <input type="file" class="form-control" id="stamp-input" accept=".png,.jpg,.jpeg">
+                <div class="form-text" id="stamp-status">Optional stamp image.</div>
+              </div>
+              <div class="col-md-6"><label class="form-label">Declaration Name *</label><input class="form-control" name="declaration_name" required></div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+              <button type="button" class="btn btn-outline-primary" id="save-draft">Save Draft</button>
+              <button type="submit" class="btn btn-primary">Submit Onboarding Form</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="tab-downloads">
+        <div class="card p-4">
+          <h2 class="h6">Download Form</h2>
+          <p class="text-muted">Download the forms assigned to you, fill them, then upload the completed files here.</p>
+          <div id="downloads-list" class="text-muted">Loading...</div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="tab-uploads">
+        <div class="card p-4">
+          <form id="documents-form">
+            <div id="doc-slots" class="row g-3"></div>
+            <div class="mt-4 d-flex gap-2">
+              <button type="button" class="btn btn-outline-primary" id="save-docs-draft">Save Draft</button>
+              <button type="submit" class="btn btn-primary">Submit Documents</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="tab-status">
+        <div class="card p-4 status-panel">
+          <h2 class="h6">Submission Status</h2>
+          <div id="status-content" class="text-muted">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/client-portal/public/js/api.js"></script>
+  <script src="/client-portal/public/js/client/onboarding.js"></script>
+  <script src="/client-portal/public/js/client/documents.js"></script>
+  <script src="/client-portal/public/js/client/dashboard.js"></script>
+</body>
+</html>
