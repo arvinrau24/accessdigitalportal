@@ -18,10 +18,7 @@ async function api(path, options = {}) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 401 && !options.skipAuthRedirect) {
-      const isAdminPage = window.location.pathname.includes('/admin/');
-      window.location.href = isAdminPage
-        ? `${BASE}/admin/login`
-        : `${BASE}/client/login`;
+      window.location.href = `${BASE}/`;
     }
     throw new Error(data.error || `Request failed (${res.status})`);
   }
@@ -33,28 +30,31 @@ function showToast(message, type = 'success') {
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    container.className = 'ad-toast-container';
+    container.setAttribute('aria-live', 'polite');
+    container.setAttribute('aria-atomic', 'true');
     document.body.appendChild(container);
   }
   const el = document.createElement('div');
-  el.className = `toast align-items-center text-bg-${type} border-0 show`;
-  el.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+  const normalizedType = ['danger', 'warning'].includes(type) ? type : 'success';
+  const icon = normalizedType === 'danger' ? 'fa-circle-exclamation' : normalizedType === 'warning' ? 'fa-triangle-exclamation' : 'fa-check';
+  el.className = `ad-toast toast-${normalizedType}`;
+  el.setAttribute('role', normalizedType === 'danger' ? 'alert' : 'status');
+  el.innerHTML = `
+    <span class="ad-toast-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></span>
+    <div class="ad-toast-copy"></div>
+    <button type="button" class="ad-toast-close" aria-label="Dismiss notification"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+  `;
+  el.querySelector('.ad-toast-copy').textContent = message;
+  el.querySelector('.ad-toast-close').addEventListener('click', () => el.remove());
   container.appendChild(el);
   setTimeout(() => el.remove(), 4000);
 }
 
 function statusBadge(status, label) {
-  const map = {
-    pending_onboarding: 'secondary',
-    not_started: 'secondary',
-    draft: 'info',
-    submitted: 'warning',
-    pending_approval: 'warning',
-    approved: 'success',
-    rejected: 'danger',
-  };
   const text = label || (status || '').replace(/_/g, ' ');
-  return `<span class="badge text-bg-${map[status] || 'secondary'}">${text}</span>`;
+  const safeStatus = String(status || 'pending_onboarding').replace(/[^a-z_]/gi, '').toLowerCase();
+  return `<span class="status-badge status-${safeStatus}">${escapeHtml(text)}</span>`;
 }
 
 function goBack() {
@@ -80,9 +80,7 @@ function bindPasswordToggle(inputId, buttonId) {
 async function requireRole(role) {
   const me = await api('/auth/me', { skipAuthRedirect: true }).catch(() => null);
   if (!me?.data || me.data.role !== role) {
-    window.location.href = role === 'admin'
-      ? `${BASE}/admin/login`
-      : `${BASE}/client/login`;
+    window.location.href = `${BASE}/`;
     return null;
   }
   return me.data;
@@ -91,4 +89,13 @@ async function requireRole(role) {
 async function logout() {
   await api('/auth/logout', { method: 'POST', skipAuthRedirect: true }).catch(() => {});
   window.location.href = `${BASE}/`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

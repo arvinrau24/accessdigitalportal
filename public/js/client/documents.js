@@ -14,9 +14,9 @@ function renderDocSlots(existing = []) {
     const label = docLabels[type] || type.replace(/_/g, ' ');
     return `<div class="col-md-6">
       <div class="doc-slot ${doc ? 'uploaded' : ''}">
-        <label class="form-label">${label}</label>
-        <input type="file" class="form-control" name="${type}" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-        ${doc ? `<div class="form-text">Current: ${doc.fileName || 'uploaded'} ${doc.is_draft ? '(draft)' : '(submitted)'}</div>` : ''}
+        <label class="form-label" for="document-${type}">${escapeHtml(label)}</label>
+        <input id="document-${type}" type="file" class="form-control" name="${type}" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+        ${doc ? `<div class="upload-state"><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Current: ${escapeHtml(doc.fileName || 'uploaded')} ${doc.is_draft ? '(draft)' : '(submitted)'}</div>` : '<div class="form-text">Accepted: PDF, Word, JPG or PNG.</div>'}
       </div>
     </div>`;
   }).join('');
@@ -31,6 +31,7 @@ async function loadDocuments() {
     if (!docsCanEdit) {
       document.querySelectorAll('#documents-form input, #documents-form button').forEach((el) => { el.disabled = true; });
     }
+    document.getElementById('documents-lock-note')?.classList.toggle('d-none', docsCanEdit);
   } catch (err) {
     showToast(err.message, 'danger');
   }

@@ -1,5 +1,8 @@
 (async function init() {
-  await requireRole('admin');
+  const user = await requireRole('admin');
+  if (!user) return;
+  document.getElementById('admin-name').textContent = user.username || 'Administrator';
+  document.getElementById('admin-initial').textContent = (user.username || 'A').slice(0, 1).toUpperCase();
   setupDropzone();
   document.getElementById('upload-form').addEventListener('submit', uploadTemplates);
   loadTemplates();
@@ -9,6 +12,12 @@ function setupDropzone() {
   const dropzone = document.getElementById('dropzone');
   const input = document.getElementById('file-input');
   dropzone.addEventListener('click', () => input.click());
+  dropzone.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      input.click();
+    }
+  });
   dropzone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropzone.classList.add('dragover');
@@ -28,9 +37,11 @@ function renderFileList() {
   const el = document.getElementById('file-list');
   if (!input.files.length) {
     el.textContent = 'No files selected.';
+    el.classList.remove('has-files');
     return;
   }
-  el.innerHTML = Array.from(input.files).map((f) => escapeHtml(f.name)).join('<br>');
+  el.innerHTML = Array.from(input.files).map((f) => `<div><i class="fa-solid fa-file" aria-hidden="true"></i> ${escapeHtml(f.name)}</div>`).join('');
+  el.classList.add('has-files');
 }
 
 async function loadTemplates() {
@@ -38,23 +49,25 @@ async function loadTemplates() {
   try {
     const res = await api('/admin/templates');
     if (!res.data.length) {
-      el.innerHTML = '<span class="text-muted">No templates uploaded yet.</span>';
+      el.innerHTML = '<div class="empty-state"><div><i class="fa-regular fa-folder-open" aria-hidden="true"></i><strong>No templates yet</strong><span>Upload files to make them available to the relevant client type.</span></div></div>';
       return;
     }
-    el.innerHTML = `<table class="table table-sm">
-      <thead><tr><th>Type</th><th>File name</th><th>Uploaded</th><th></th></tr></thead>
+    el.innerHTML = `<div class="table-responsive"><table class="table responsive-table">
+      <thead><tr><th>Client type</th><th>File name</th><th>Uploaded</th><th></th></tr></thead>
       <tbody>${res.data.map((t) => `
         <tr>
-          <td>${t.client_type}</td>
-          <td>${escapeHtml(t.original_filename || t.display_name || '—')}</td>
-          <td>${new Date(t.uploaded_at).toLocaleDateString()}</td>
+          <td data-label="Client type">Type ${t.client_type}</td>
+          <td class="company-cell" data-label="File name">${escapeHtml(t.original_filename || t.display_name || '—')}</td>
+          <td data-label="Uploaded">${new Date(t.uploaded_at).toLocaleDateString()}</td>
           <td>
-            <a href="/client-portal/api/admin/templates/${t.id}/download" class="btn btn-sm btn-outline-primary">Download</a>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteTemplate(${t.id})">Delete</button>
+            <div class="d-flex flex-wrap gap-2 justify-content-end">
+              <a href="/client-portal/api/admin/templates/${t.id}/download" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download" aria-hidden="true"></i><span>Download</span></a>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteTemplate(${t.id})"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Delete</span></button>
+            </div>
           </td>
-        </tr>`).join('')}</tbody></table>`;
+        </tr>`).join('')}</tbody></table></div>`;
   } catch (err) {
-    el.innerHTML = `<span class="text-danger">${err.message}</span>`;
+    el.innerHTML = `<div class="empty-state"><div><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><strong>Unable to load templates</strong><span>${escapeHtml(err.message)}</span></div></div>`;
   }
 }
 
@@ -80,7 +93,7 @@ async function uploadTemplates(e) {
 }
 
 async function deleteTemplate(id) {
-  if (!confirm('Delete this template?')) return;
+  if (!confirm('Delete this template? Existing client upload records for this file will also be removed.')) return;
   try {
     await api(`/admin/templates/${id}`, { method: 'DELETE' });
     showToast('Template deleted');
@@ -88,10 +101,6 @@ async function deleteTemplate(id) {
   } catch (err) {
     showToast(err.message, 'danger');
   }
-}
-
-function escapeHtml(str) {
-  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 window.deleteTemplate = deleteTemplate;

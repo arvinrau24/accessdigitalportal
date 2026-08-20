@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Login — AccessDigital</title>
+<link rel="stylesheet" href="/client-portal/public/css/client-login.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'Inter', sans-serif; }
+
+  .login-page { height: 100vh; height: 100dvh; overflow: hidden; }
+  .login-panel {
+    height: 100%;
+    min-height: 0;
+    padding-top: clamp(0.75rem, 3vh, 2rem);
+    padding-bottom: clamp(0.75rem, 3vh, 2rem);
+  }
+  .company-logo { height: clamp(3rem, 8vh, 5.5rem); }
+  .login-card { padding: clamp(1rem, 3vh, 2rem); }
+  .role-switcher { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25rem; padding: 0.25rem; background: #f1f5f9; border-radius: 0.75rem; margin-bottom: clamp(0.75rem, 2vh, 1.25rem); }
+  .role-tab { border: 0; border-radius: 0.55rem; padding: 0.6rem 0.75rem; background: transparent; color: #64748b; font-size: 0.8125rem; font-weight: 600; transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease; }
+  .role-tab:hover { color: #1a56c4; }
+  .role-tab[aria-pressed="true"] { background: #ffffff; color: #1a56c4; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
+  .role-tab:focus-visible { outline: 2px solid #1a56c4; outline-offset: 2px; }
+  .login-form > * + * { margin-top: clamp(0.65rem, 1.8vh, 1.25rem) !important; }
+  .login-input { padding-top: clamp(0.55rem, 1.8vh, 0.75rem); padding-bottom: clamp(0.55rem, 1.8vh, 0.75rem); }
+  .sign-in-button { padding-top: clamp(0.65rem, 2vh, 0.875rem); padding-bottom: clamp(0.65rem, 2vh, 0.875rem); }
+  .login-footer { padding-top: clamp(0.75rem, 2.5vh, 2rem); }
+
+  .hero-header { padding: clamp(1rem, 3vh, 2.5rem); }
+  .hero-content { padding-left: clamp(2rem, 5vw, 4rem); padding-right: clamp(2rem, 5vw, 4rem); }
+  .hero-title { font-size: clamp(2rem, 3.5vw, 3rem); }
+  .hero-description { margin-bottom: clamp(1rem, 3vh, 2rem); }
+  .hero-features { gap: clamp(0.75rem, 2vh, 1.25rem); }
+  .hero-footer { padding-left: clamp(2rem, 5vw, 4rem); padding-right: clamp(2rem, 5vw, 4rem); padding-bottom: clamp(1rem, 3vh, 2rem); }
+  .hero-footer-card { padding: clamp(1rem, 2.5vh, 1.5rem) clamp(1.25rem, 3vw, 2rem); }
+
+  @media (max-height: 560px) {
+    .login-panel { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .company-logo { height: 2.5rem; }
+    .login-card { padding: 0.75rem 1rem; }
+    .login-card h1 { font-size: 1.25rem; }
+    .login-card > p { margin-bottom: 0.75rem; font-size: 0.875rem; }
+    .role-switcher { margin-bottom: 0.5rem; }
+    .role-tab { padding: 0.45rem 0.6rem; font-size: 0.75rem; }
+    .login-form > * + * { margin-top: 0.5rem !important; }
+    .login-card label, .login-card input, .login-card .text-sm { font-size: 0.8125rem; }
+    .login-footer { padding-top: 0.5rem; font-size: 0.6875rem; }
+    .hero-content { transform: scale(0.88); transform-origin: center; }
+    .hero-header, .hero-footer { transform: scale(0.9); transform-origin: top right; }
+  }
+</style>
+</head>
+<body class="bg-white">
+  <div class="login-page w-full flex flex-col lg:flex-row">
+
+    <!-- Left panel: login -->
+    <div class="login-panel w-full lg:w-[520px] shrink-0 overflow-hidden bg-gradient-to-b from-sky-50 to-white flex flex-col px-6 sm:px-10">
+      <a href="/client-portal/" class="flex max-w-md mx-auto w-full shrink-0 justify-center focus:outline-none focus:ring-2 focus:ring-adblue rounded-lg">
+        <img src="/client-portal/public/logo.png" alt="Access Digital — Intelligence behind every access" class="company-logo block w-auto">
+      </a>
+
+      <div class="max-w-md mx-auto w-full flex-1 min-h-0 flex items-center">
+        <div class="login-card w-full bg-white rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-100">
+          <h1 class="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
+          <p id="portal-description" class="text-slate-500 mb-6">Sign in to your Client Portal</p>
+
+          <div class="role-switcher" role="group" aria-label="Select portal type">
+            <button type="button" class="role-tab" data-role="client" aria-pressed="true">Client Portal</button>
+            <button type="button" class="role-tab" data-role="admin" aria-pressed="false">Admin Portal</button>
+          </div>
+
+          <div id="login-message" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm" role="alert"></div>
+
+          <form id="login-form" class="login-form space-y-5" novalidate>
+            <div>
+              <label id="identity-label" for="identity-input" class="block text-sm font-semibold text-slate-700 mb-2">Client ID</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
+                  <i id="identity-icon" class="fa-regular fa-user"></i>
+                </span>
+                <input type="text" id="identity-input" name="clientLoginId" required autofocus autocomplete="username"
+                  placeholder="Enter your client ID"
+                  class="login-input w-full pl-10 pr-4 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-adblue focus:border-adblue transition">
+              </div>
+            </div>
+
+            <div>
+              <label for="password-input" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
+                  <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" id="password-input" name="password" required autocomplete="current-password"
+                  placeholder="Enter your password"
+                  class="login-input w-full pl-10 pr-10 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-adblue focus:border-adblue transition">
+                <button type="button" id="toggle-password" aria-label="Show password"
+                  class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-adblue rounded">
+                  <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-adblue focus:ring-adblue">
+                <span class="text-sm text-slate-600">Remember me</span>
+              </label>
+              <a href="#" class="text-sm font-medium text-adblue hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Forgot password?</a>
+            </div>
+
+            <button type="submit" id="sign-in-btn"
+              class="sign-in-button w-full flex items-center justify-center gap-2 bg-gradient-to-r from-adblue to-blue-600 hover:from-blue-700 hover:to-blue-700 text-white font-semibold text-sm uppercase tracking-wide rounded-xl shadow-md shadow-blue-200 transition disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-adblue">
+              <i class="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+              <span id="sign-in-label">Sign in</span>
+            </button>
+
+            <div class="flex items-center gap-3 pt-1">
+              <div class="h-px bg-slate-200 flex-1"></div>
+              <span class="text-xs text-slate-400">or</span>
+              <div class="h-px bg-slate-200 flex-1"></div>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 text-sm text-slate-500 pt-1">
+              <i class="fa-solid fa-headset" aria-hidden="true"></i>
+              <span>Need help?</span>
+              <a href="#" class="text-adblue font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Contact Support</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="login-footer max-w-md mx-auto w-full shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <span class="text-center sm:text-left">© 2026 Access Digital Sdn Bhd. All rights reserved.</span>
+        <div class="flex items-center gap-3">
+          <a href="#" class="hover:text-adblue focus:outline-none focus:ring-2 focus:ring-adblue rounded">Privacy Policy</a>
+          <span aria-hidden="true">|</span>
+          <a href="#" class="hover:text-adblue focus:outline-none focus:ring-2 focus:ring-adblue rounded">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel: hero -->
+    <div class="relative flex-1 hidden lg:flex lg:flex-col overflow-hidden bg-gradient-to-br from-sky-50 via-blue-50 to-white">
+      <div class="absolute inset-0">
+        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0a015f523f_7a9074e2247d6bc8.png"
+          alt="Modern office building with an automatic security barrier gate"
+          class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-sky-50 via-sky-50/40 to-transparent"></div>
+      </div>
+
+      <div class="hero-header relative z-10 flex justify-end">
+        <div class="bg-white/90 backdrop-blur rounded-2xl shadow-md px-5 py-3 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue">
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-slate-800">Secure Client Portal</div>
+            <div class="text-xs text-slate-500">Your security is our priority</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-content relative z-10 flex-1 flex flex-col justify-center">
+        <div class="max-w-xl">
+          <h2 class="hero-title font-extrabold text-slate-800 leading-tight">Secure access.</h2>
+          <h2 class="hero-title font-extrabold text-adblue leading-tight mb-5">Seamless experience.</h2>
+          <p class="hero-description text-slate-500 text-lg max-w-md">Access your documents, submit files and track progress securely, anytime.</p>
+          <div class="hero-features flex flex-col">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-slate-800">Secure &amp; Encrypted</div>
+                <div class="text-sm text-slate-500">Your data is protected with industry-leading security.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-slate-800">Document Submission</div>
+                <div class="text-sm text-slate-500">Upload and submit documents easily and securely.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+                <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-slate-800">Track &amp; Manage</div>
+                <div class="text-sm text-slate-500">Track the progress and status of your submissions.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer relative z-10">
+        <div class="hero-footer-card bg-white/90 backdrop-blur rounded-2xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-solid fa-lock" aria-hidden="true"></i></div>
+            <div>
+              <div class="font-semibold text-slate-800 text-sm">Your Security</div>
+              <div class="text-xs text-slate-500">Advanced security you can trust.</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-regular fa-clock" aria-hidden="true"></i></div>
+            <div>
+              <div class="font-semibold text-slate-800 text-sm">Anytime Access</div>
+              <div class="text-xs text-slate-500">Access your portal anytime, anywhere.</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
+            <div>
+              <div class="font-semibold text-slate-800 text-sm">Dedicated Support</div>
+              <div class="text-xs text-slate-500">Our team is here to help you.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/client-portal/public/js/api.js"></script>
+  <script>
+    let selectedRole = 'client';
+
+    function selectRole(role) {
+      selectedRole = role;
+      const isAdmin = role === 'admin';
+      const identityInput = document.getElementById('identity-input');
+      const identityLabel = document.getElementById('identity-label');
+      const identityIcon = document.getElementById('identity-icon');
+
+      document.getElementById('portal-description').textContent = isAdmin
+        ? 'Sign in to your Admin Portal'
+        : 'Sign in to your Client Portal';
+      identityLabel.textContent = isAdmin ? 'Username' : 'Client ID';
+      identityInput.name = isAdmin ? 'username' : 'clientLoginId';
+      identityInput.placeholder = isAdmin ? 'Enter your username' : 'Enter your client ID';
+      identityIcon.classList.toggle('fa-user', !isAdmin);
+      identityIcon.classList.toggle('fa-user-tie', isAdmin);
+
+      document.querySelectorAll('[data-role]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.role === role));
+      });
+      setMessage('');
+      identityInput.focus();
+    }
+
+    document.querySelectorAll('[data-role]').forEach((button) => {
+      button.addEventListener('click', () => selectRole(button.dataset.role));
+    });
+
+    // Password visibility toggle
+    document.getElementById('toggle-password').addEventListener('click', function () {
+      const input = document.getElementById('password-input');
+      const icon = this.querySelector('i');
+      const willShow = input.type === 'password';
+      input.type = willShow ? 'text' : 'password';
+      icon.classList.toggle('fa-eye', !willShow);
+      icon.classList.toggle('fa-eye-slash', willShow);
+      this.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password');
+    });
+
+    function setMessage(text) {
+      const el = document.getElementById('login-message');
+      if (!text) {
+        el.classList.add('hidden');
+        el.textContent = '';
+        return;
+      }
+      el.textContent = text;
+      el.className = 'mb-4 rounded-xl border px-4 py-3 text-sm bg-red-50 border-red-100 text-red-600';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setMessage('');
+      const form = e.target;
+      const btn = document.getElementById('sign-in-btn');
+      const label = document.getElementById('sign-in-label');
+      const fd = new FormData(form);
+
+      btn.disabled = true;
+      label.textContent = 'Signing in…';
+
+      try {
+        const isAdmin = selectedRole === 'admin';
+        await api(isAdmin ? '/auth/admin/login' : '/auth/client/login', {
+          method: 'POST',
+          body: isAdmin
+            ? { username: fd.get('username'), password: fd.get('password') }
+            : { clientLoginId: fd.get('clientLoginId'), password: fd.get('password') },
+          skipAuthRedirect: true,
+        });
+        window.location.href = isAdmin
+          ? '/client-portal/admin/dashboard'
+          : '/client-portal/client/dashboard';
+      } catch (err) {
+        setMessage(err.message || 'Unable to sign in. Please check your details and try again.');
+        btn.disabled = false;
+        label.textContent = 'Sign in';
+      }
+    });
+  </script>
+</body>
+</html>

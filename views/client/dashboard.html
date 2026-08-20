@@ -3,150 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a56c4">
   <title>Client Dashboard — AccessDigital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/client-portal/public/css/app.css" rel="stylesheet">
+  <link href="/client-portal/public/css/portal.css" rel="stylesheet">
 </head>
-<body>
-  <nav class="navbar navbar-dark navbar-expand-lg" style="background: var(--ad-primary);">
-    <div class="container">
-      <span class="navbar-brand" id="nav-company">Client Dashboard</span>
-      <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-light" onclick="goBack()">Back</button>
-        <button class="btn btn-sm btn-outline-light" onclick="logout()">Logout</button>
-      </div>
-    </div>
-  </nav>
-  <div class="container py-4">
-    <ul class="nav nav-tabs mb-3" id="dashboard-tabs">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-onboarding">Onboarding Form</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-downloads">TNG & BANK Form</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-uploads">Upload Suporting Documents</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-status">Status</button></li>
-    </ul>
+<body class="portal-body">
+  <div class="portal-shell">
+    <aside class="portal-sidebar" id="portal-navigation" aria-label="Client portal navigation">
+      <a class="portal-brand" href="/client-portal/client/dashboard" aria-label="AccessDigital Client Dashboard"><img src="/client-portal/public/logo.png" alt=""><span class="portal-brand-copy"><span class="portal-brand-name">AccessDigital</span><span class="portal-brand-role">Client portal</span></span></a>
+      <p class="sidebar-section-label">Your workspace</p>
+      <nav class="portal-nav">
+        <button class="portal-nav-link active" type="button" data-bs-toggle="tab" data-bs-target="#tab-onboarding" aria-controls="tab-onboarding" aria-selected="true"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span>Onboarding form</span></button>
+        <button class="portal-nav-link" type="button" data-bs-toggle="tab" data-bs-target="#tab-downloads" aria-controls="tab-downloads" aria-selected="false"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i><span>Assigned forms</span></button>
+        <button class="portal-nav-link" type="button" data-bs-toggle="tab" data-bs-target="#tab-uploads" aria-controls="tab-uploads" aria-selected="false"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><span>Supporting documents</span></button>
+        <button class="portal-nav-link" type="button" data-bs-toggle="tab" data-bs-target="#tab-status" aria-controls="tab-status" aria-selected="false"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Submission status</span></button>
+      </nav>
+      <div class="sidebar-spacer"></div><div class="sidebar-support"><i class="fa-solid fa-life-ring" aria-hidden="true"></i><div><strong>Need assistance?</strong><span>Save your work as a draft whenever you need to pause.</span></div></div>
+    </aside>
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
 
-    <div class="tab-content">
-      <div class="tab-pane fade show active" id="tab-onboarding">
-        <div class="card p-4">
-          <form id="onboarding-form">
-            <div class="form-section-title">Company Information</div>
-            <div class="row g-3">
-              <div class="col-md-6"><label class="form-label">Company Name *</label><input class="form-control" name="company_name" required></div>
-              <div class="col-md-6"><label class="form-label">Company Registration No. *</label><input class="form-control" name="company_registration_no" required></div>
-              <div class="col-12"><label class="form-label">Company Full Office Address *</label><textarea class="form-control" name="company_office_address" rows="2" required></textarea></div>
-              <div class="col-md-4"><label class="form-label">Company Tax Number</label><input class="form-control" name="company_tax_number"></div>
-              <div class="col-md-4"><label class="form-label">Company SSM No.</label><input class="form-control" name="company_ssm_no"></div>
-              <div class="col-md-4"><label class="form-label">Company SST No.</label><input class="form-control" name="company_sst_no"></div>
-            </div>
+    <main class="portal-main">
+      <header class="portal-topbar"><div class="d-flex align-items-center gap-3 min-w-0"><button class="sidebar-toggle" type="button" data-sidebar-toggle aria-label="Open navigation" aria-controls="portal-navigation" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button><div class="topbar-context"><span class="topbar-eyebrow">Client workspace</span><span class="topbar-title" id="nav-company">Client dashboard</span></div></div><div class="topbar-actions"><button type="button" class="btn btn-sm btn-quiet" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i><span>Sign out</span></button><div class="account-summary" aria-label="Your client account"><span class="account-avatar" id="client-initial">C</span><span class="account-copy"><span>Client account</span><strong id="client-company-name">Your company</strong></span></div></div></header>
+      <section class="portal-content">
+        <div class="page-heading" data-reveal><div class="page-heading-copy"><div class="page-kicker"><i class="fa-solid fa-hand-wave" aria-hidden="true"></i> Welcome</div><h1>Let’s get your onboarding complete.</h1><p>Work through the required details, forms, and documents. Your progress is saved securely as you go.</p></div></div>
+        <section class="progress-card" data-reveal="2" aria-labelledby="progress-title"><div><h2 id="progress-title">Submission progress</h2><p id="submission-progress-description">Checking your workspace progress…</p><div class="progress-track" role="progressbar" aria-label="Submission progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" id="submission-progress-bar"></div></div></div><div class="progress-count" id="submission-progress-count">—</div></section>
+        <ul class="nav portal-tabs" id="dashboard-tabs" role="tablist" data-reveal="3">
+          <li class="nav-item" role="presentation"><button class="nav-link active" data-portal-tab data-bs-toggle="tab" data-bs-target="#tab-onboarding" type="button" role="tab" aria-controls="tab-onboarding" aria-selected="true"><i class="fa-solid fa-clipboard-list me-1" aria-hidden="true"></i> Onboarding</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-portal-tab data-bs-toggle="tab" data-bs-target="#tab-downloads" type="button" role="tab" aria-controls="tab-downloads" aria-selected="false"><i class="fa-solid fa-file-arrow-down me-1" aria-hidden="true"></i> Assigned forms</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-portal-tab data-bs-toggle="tab" data-bs-target="#tab-uploads" type="button" role="tab" aria-controls="tab-uploads" aria-selected="false"><i class="fa-solid fa-cloud-arrow-up me-1" aria-hidden="true"></i> Documents</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-portal-tab data-bs-toggle="tab" data-bs-target="#tab-status" type="button" role="tab" aria-controls="tab-status" aria-selected="false"><i class="fa-solid fa-chart-line me-1" aria-hidden="true"></i> Status</button></li>
+        </ul>
 
-            <div class="form-section-title">Car Park Site</div>
-            <div class="row g-3">
-              <div class="col-md-6"><label class="form-label">Car Park Site Name *</label><input class="form-control" name="car_park_site_name" required></div>
-              <div class="col-12"><label class="form-label">Car Park Site Address *</label><textarea class="form-control" name="car_park_site_address" rows="2" required></textarea></div>
-              <div class="col-12">
-                <label class="form-label d-block">Type of Car Park *</label>
-                <select class="form-select" name="car_park_type" required>
-                  <option value="">Select...</option>
-                  <option>Open Site</option>
-                  <option>Office Building</option>
-                  <option>Commercial Building (Mall)</option>
-                  <option>Government Building</option>
-                  <option>Hospital</option>
-                </select>
-              </div>
-              <div class="col-md-4"><label class="form-label">No. of Entry</label><input class="form-control" name="no_of_entry"></div>
-              <div class="col-md-4"><label class="form-label">No. of Exit</label><input class="form-control" name="no_of_exit"></div>
-              <div class="col-md-4"><label class="form-label">No. of Zone</label><input class="form-control" name="no_of_zone"></div>
-              <div class="col-md-4"><label class="form-label">No. of Validator</label><input class="form-control" name="no_of_validator"></div>
-              <div class="col-md-4"><label class="form-label">No. of Parking Bays</label><input class="form-control" name="no_of_parking_bay"></div>
-            </div>
-
-            <div class="form-section-title">Authorized Person in Charge</div>
-            <div class="row g-3">
-              <div class="col-md-6"><label class="form-label">Office: Name</label><input class="form-control" name="authorized_pic_office_name"></div>
-              <div class="col-md-6"><label class="form-label">Office: Contact</label><input class="form-control" name="authorized_pic_office_contact"></div>
-              <div class="col-md-6"><label class="form-label">Site: Name</label><input class="form-control" name="authorized_pic_site_name"></div>
-              <div class="col-md-6"><label class="form-label">Site: Contact</label><input class="form-control" name="authorized_pic_site_contact"></div>
-            </div>
-
-            <div class="form-section-title">Email & Banking</div>
-            <div class="row g-3">
-              <div class="col-md-6"><label class="form-label">Authorized Email *</label><input type="email" class="form-control" name="authorized_email" required></div>
-              <div class="col-md-6"><label class="form-label">CC Email(s)</label><input class="form-control" name="authorized_email_cc"></div>
-              <div class="col-md-6"><label class="form-label">Bank Name *</label><input class="form-control" name="bank_name" required></div>
-              <div class="col-md-6"><label class="form-label">Bank Account Name *</label><input class="form-control" name="bank_account_name" required></div>
-              <div class="col-md-6"><label class="form-label">Bank Account No. *</label><input class="form-control" name="bank_account_number" required></div>
-              <div class="col-12"><label class="form-label">Bank Address</label><textarea class="form-control" name="bank_address" rows="2"></textarea></div>
-              <div class="col-12">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="primary_active_bank_account" value="1" id="primaryBank">
-                  <label class="form-check-label" for="primaryBank">Confirm this is the Primary & Active Bank Account</label>
-                </div>
-              </div>
-              <div class="col-12">
-                <label class="form-label">Commercial Model</label>
-                <input class="form-control" id="commercial-mode-display" readonly>
-              </div>
-            </div>
-
-            <div class="form-section-title">Declaration</div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Authorized Signature *</label>
-                <canvas id="signature-pad" width="400" height="120"></canvas>
-                <div class="mt-2 d-flex gap-2">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-signature">Clear</button>
-                  <button type="button" class="btn btn-sm btn-outline-primary" id="save-signature">Save Signature</button>
-                </div>
-                <div class="form-text" id="signature-status">No signature saved yet.</div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Company Stamp</label>
-                <input type="file" class="form-control" id="stamp-input" accept=".png,.jpg,.jpeg">
-                <div class="form-text" id="stamp-status">Optional stamp image.</div>
-              </div>
-              <div class="col-md-6"><label class="form-label">Declaration Name *</label><input class="form-control" name="declaration_name" required></div>
-            </div>
-
-            <div class="mt-4 d-flex gap-2">
-              <button type="button" class="btn btn-outline-primary" id="save-draft">Save Draft</button>
-              <button type="submit" class="btn btn-primary">Submit Onboarding Form</button>
-            </div>
-          </form>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tab-onboarding" role="tabpanel" tabindex="0">
+            <section class="portal-card"><div class="portal-card-header"><div><h2>Onboarding form</h2><p>Provide your company, site, contact, and banking information.</p></div><span class="status-badge status-draft">Save anytime</span></div><div class="portal-card-body">
+              <div id="workspace-lock-note" class="form-note d-none mb-4" role="status"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>This form is currently locked while your submission is reviewed.</span></div>
+              <form id="onboarding-form">
+                <div class="form-section-title">Company information</div><div class="row g-3"><div class="col-md-6"><label class="form-label" for="company-name">Company name *</label><input id="company-name" class="form-control" name="company_name" autocomplete="organization" required></div><div class="col-md-6"><label class="form-label" for="company-registration">Company registration no. *</label><input id="company-registration" class="form-control" name="company_registration_no" required></div><div class="col-12"><label class="form-label" for="company-address">Company full office address *</label><textarea id="company-address" class="form-control" name="company_office_address" rows="2" autocomplete="street-address" required></textarea></div><div class="col-md-4"><label class="form-label" for="company-tax">Company tax number</label><input id="company-tax" class="form-control" name="company_tax_number"></div><div class="col-md-4"><label class="form-label" for="company-ssm">Company SSM no.</label><input id="company-ssm" class="form-control" name="company_ssm_no"></div><div class="col-md-4"><label class="form-label" for="company-sst">Company SST no.</label><input id="company-sst" class="form-control" name="company_sst_no"></div></div>
+                <div class="form-section-title">Car park site</div><div class="row g-3"><div class="col-md-6"><label class="form-label" for="site-name">Car park site name *</label><input id="site-name" class="form-control" name="car_park_site_name" required></div><div class="col-12"><label class="form-label" for="site-address">Car park site address *</label><textarea id="site-address" class="form-control" name="car_park_site_address" rows="2" required></textarea></div><div class="col-12"><label class="form-label" for="car-park-type">Type of car park *</label><select class="form-select" id="car-park-type" name="car_park_type" required><option value="">Select a type…</option><option>Open Site</option><option>Office Building</option><option>Commercial Building (Mall)</option><option>Government Building</option><option>Hospital</option></select></div><div class="col-md-4"><label class="form-label" for="entry-count">No. of entry</label><input id="entry-count" class="form-control" name="no_of_entry" inputmode="numeric"></div><div class="col-md-4"><label class="form-label" for="exit-count">No. of exit</label><input id="exit-count" class="form-control" name="no_of_exit" inputmode="numeric"></div><div class="col-md-4"><label class="form-label" for="zone-count">No. of zone</label><input id="zone-count" class="form-control" name="no_of_zone" inputmode="numeric"></div><div class="col-md-6"><label class="form-label" for="validator-count">No. of validator</label><input id="validator-count" class="form-control" name="no_of_validator" inputmode="numeric"></div><div class="col-md-6"><label class="form-label" for="bay-count">No. of parking bays</label><input id="bay-count" class="form-control" name="no_of_parking_bay" inputmode="numeric"></div></div>
+                <div class="form-section-title">Authorized person in charge</div><div class="row g-3"><div class="col-md-6"><label class="form-label" for="office-contact-name">Office: name</label><input id="office-contact-name" class="form-control" name="authorized_pic_office_name" autocomplete="name"></div><div class="col-md-6"><label class="form-label" for="office-contact-phone">Office: contact</label><input id="office-contact-phone" class="form-control" name="authorized_pic_office_contact" autocomplete="tel"></div><div class="col-md-6"><label class="form-label" for="site-contact-name">Site: name</label><input id="site-contact-name" class="form-control" name="authorized_pic_site_name" autocomplete="name"></div><div class="col-md-6"><label class="form-label" for="site-contact-phone">Site: contact</label><input id="site-contact-phone" class="form-control" name="authorized_pic_site_contact" autocomplete="tel"></div><div class="col-12"><label class="form-label" for="authorized-email">Authorized email *</label><input id="authorized-email" class="form-control" name="authorized_email" type="email" autocomplete="email" required></div></div>
+                <div class="form-section-title">Banking details</div><div class="row g-3"><div class="col-md-4"><label class="form-label" for="bank-name">Bank name *</label><input id="bank-name" class="form-control" name="bank_name" required></div><div class="col-md-4"><label class="form-label" for="bank-account-name">Bank account name *</label><input id="bank-account-name" class="form-control" name="bank_account_name" required></div><div class="col-md-4"><label class="form-label" for="bank-account-number">Bank account number *</label><input id="bank-account-number" class="form-control" name="bank_account_number" inputmode="numeric" required></div><div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" name="primary_active_bank_account" value="1" id="primaryBank"><label class="form-check-label" for="primaryBank">I confirm this is the primary and active bank account.</label></div></div><div class="col-12"><label class="form-label" for="commercial-mode-display">Commercial model</label><input class="form-control" id="commercial-mode-display" readonly></div></div>
+                <div class="form-section-title">Declaration</div><div class="row g-3"><div class="col-lg-6"><label class="form-label" for="signature-pad">Authorized signature *</label><canvas id="signature-pad" width="400" height="120" aria-label="Signature drawing area"></canvas><div class="mt-2 d-flex flex-wrap gap-2"><button type="button" class="btn btn-sm btn-outline-secondary" id="clear-signature"><i class="fa-solid fa-eraser" aria-hidden="true"></i> Clear</button><button type="button" class="btn btn-sm btn-outline-primary" id="save-signature"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save signature</button></div><div class="form-text" id="signature-status">No signature saved yet.</div></div><div class="col-lg-6"><label class="form-label" for="stamp-input">Company stamp</label><input type="file" class="form-control" id="stamp-input" accept=".png,.jpg,.jpeg"><div class="form-text" id="stamp-status">Optional PNG or JPG image.</div></div><div class="col-lg-6"><label class="form-label" for="declaration-name">Declaration name *</label><input id="declaration-name" class="form-control" name="declaration_name" autocomplete="name" required></div></div>
+                <div class="form-actions"><button type="button" class="btn btn-outline-primary" id="save-draft"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save draft</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Submit onboarding form</button></div>
+              </form>
+            </div></section>
+          </div>
+          <div class="tab-pane fade" id="tab-downloads" role="tabpanel" tabindex="0"><section class="portal-card"><div class="portal-card-header"><div><h2>Assigned forms</h2><p>Download each assigned form, complete it, and upload the finished copy below.</p></div></div><div class="portal-card-body" id="downloads-list"><span class="loading-line">Loading assigned forms</span></div></section></div>
+          <div class="tab-pane fade" id="tab-uploads" role="tabpanel" tabindex="0"><section class="portal-card"><div class="portal-card-header"><div><h2>Supporting documents</h2><p>Upload the required evidence for your onboarding review.</p></div><span class="status-badge status-draft">Save as draft</span></div><div class="portal-card-body"><div id="documents-lock-note" class="form-note d-none mb-4" role="status"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>Documents are locked while your submission is being reviewed.</span></div><form id="documents-form"><div id="doc-slots" class="row g-3"></div><div class="form-actions"><button type="button" class="btn btn-outline-primary" id="save-docs-draft"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save draft</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Submit documents</button></div></form></div></section></div>
+          <div class="tab-pane fade" id="tab-status" role="tabpanel" tabindex="0"><section class="portal-card"><div class="portal-card-header"><div><h2>Submission status</h2><p>Track what has been completed and what happens next.</p></div></div><div class="portal-card-body" id="status-content"><span class="loading-line">Loading your status</span></div></section></div>
         </div>
-      </div>
-
-      <div class="tab-pane fade" id="tab-downloads">
-        <div class="card p-4">
-          <h2 class="h6">Download Form</h2>
-          <p class="text-muted">Download the forms assigned to you, fill them, then upload the completed files here.</p>
-          <div id="downloads-list" class="text-muted">Loading...</div>
-        </div>
-      </div>
-
-      <div class="tab-pane fade" id="tab-uploads">
-        <div class="card p-4">
-          <form id="documents-form">
-            <div id="doc-slots" class="row g-3"></div>
-            <div class="mt-4 d-flex gap-2">
-              <button type="button" class="btn btn-outline-primary" id="save-docs-draft">Save Draft</button>
-              <button type="submit" class="btn btn-primary">Submit Documents</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="tab-pane fade" id="tab-status">
-        <div class="card p-4 status-panel">
-          <h2 class="h6">Submission Status</h2>
-          <div id="status-content" class="text-muted">Loading...</div>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/client-portal/public/js/api.js"></script>
+  <script src="/client-portal/public/js/portal.js"></script>
   <script src="/client-portal/public/js/client/onboarding.js"></script>
   <script src="/client-portal/public/js/client/documents.js"></script>
   <script src="/client-portal/public/js/client/dashboard.js"></script>

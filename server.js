@@ -26,20 +26,29 @@ app.use(cookieParser());
 app.use(`${BASE}/public`, express.static(config.paths.public));
 
 const pageRoutes = [
-  ['/', 'index.html'],
-  ['/admin/login', 'admin/login.html'],
   ['/admin/dashboard', 'admin/dashboard.html'],
   ['/admin/clients/new', 'admin/client-new.html'],
   ['/admin/templates', 'admin/templates.html'],
-  ['/client/login', 'client/login.html'],
   ['/client/dashboard', 'client/dashboard.html'],
 ];
+
+app.get(`${BASE}/`, (req, res) => {
+  res.sendFile(path.join(config.paths.public, 'client-login.html'));
+});
 
 for (const [route, file] of pageRoutes) {
   app.get(`${BASE}${route}`, (req, res) => {
     res.sendFile(path.join(config.paths.views, file));
   });
 }
+
+app.get(`${BASE}/client/login`, (req, res) => {
+  res.redirect(`${BASE}/`);
+});
+
+app.get(`${BASE}/admin/login`, (req, res) => {
+  res.redirect(`${BASE}/`);
+});
 
 app.get(`${BASE}/admin/clients/:id`, (req, res) => {
   res.sendFile(path.join(config.paths.views, 'admin/client-detail.html'));

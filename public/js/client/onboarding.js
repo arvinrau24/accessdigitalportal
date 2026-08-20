@@ -5,7 +5,7 @@ let canvas, ctx, drawing = false;
 function initSignaturePad() {
   canvas = document.getElementById('signature-pad');
   ctx = canvas.getContext('2d');
-  ctx.strokeStyle = '#000';
+  ctx.strokeStyle = '#1a56c4';
   ctx.lineWidth = 2;
   ctx.lineCap = 'round';
 
@@ -87,9 +87,11 @@ function populateForm(formData) {
 function setFormDisabled(disabled) {
   document.querySelectorAll('#onboarding-form input, #onboarding-form textarea, #onboarding-form select, #onboarding-form button')
     .forEach((el) => { el.disabled = disabled; });
+  document.getElementById('signature-pad').style.pointerEvents = disabled ? 'none' : '';
   if (!disabled) {
     document.getElementById('commercial-mode-display').disabled = true;
   }
+  document.getElementById('workspace-lock-note')?.classList.toggle('d-none', !disabled);
 }
 
 async function loadOnboarding() {

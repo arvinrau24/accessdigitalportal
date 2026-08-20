@@ -1,5 +1,8 @@
 (async function init() {
-  await requireRole('admin');
+  const user = await requireRole('admin');
+  if (!user) return;
+  document.getElementById('admin-name').textContent = user.username || 'Administrator';
+  document.getElementById('admin-initial').textContent = (user.username || 'A').slice(0, 1).toUpperCase();
 
   const form = document.getElementById('client-form');
   const modalEl = document.getElementById('passwordModal');
@@ -17,6 +20,7 @@
           commercial_mode: fd.get('commercial_mode'),
         },
       });
+      document.getElementById('modal-company-name').textContent = res.data.client.company_name;
       document.getElementById('modal-login-id').textContent = res.data.client.client_login_id;
       document.getElementById('modal-password').textContent = res.data.plaintextPassword;
       modal.show();

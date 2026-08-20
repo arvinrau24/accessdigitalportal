@@ -1,6 +1,9 @@
 (async function init() {
   const user = await requireRole('client');
+  if (!user) return;
   document.getElementById('nav-company').textContent = user.companyName || 'Client Dashboard';
+  document.getElementById('client-company-name').textContent = user.companyName || 'Your company';
+  document.getElementById('client-initial').textContent = (user.companyName || 'C').slice(0, 1).toUpperCase();
   loadDownloads();
   refreshStatus();
 })();
@@ -12,26 +15,30 @@ async function loadDownloads() {
     const templates = res.data;
     const canEdit = res.canEdit;
     if (!templates.length) {
-      el.innerHTML = '<span class="text-muted">No templates available yet. Contact admin.</span>';
+      el.innerHTML = '<div class="empty-state"><div><i class="fa-regular fa-folder-open" aria-hidden="true"></i><strong>No forms available yet</strong><span>Your account manager will add the forms required for your account.</span></div></div>';
       return;
     }
     el.innerHTML = templates.map((t) => {
       const filled = t.filled;
       return `
-      <div class="border rounded p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <strong>${escapeHtml(t.displayName)}</strong>
-          <a href="/client-portal/api/client/templates/${t.id}/download" class="btn btn-sm btn-outline-primary">Download</a>
+      <div class="template-item ${filled ? 'is-uploaded' : ''}">
+        <div class="template-item-icon"><i class="fa-regular fa-file-lines" aria-hidden="true"></i></div>
+        <div class="template-item-content">
+          <strong class="template-item-title">${escapeHtml(t.displayName)}</strong>
+          <div class="template-item-meta">${filled ? '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> A file is saved for this form' : 'Download, complete, then upload your filled copy.'}</div>
+          <div class="template-item-actions">
+            <a href="/client-portal/api/client/templates/${t.id}/download" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-download" aria-hidden="true"></i><span>Download</span></a>
+          </div>
+          <label class="form-label small mb-1 mt-3" for="template-upload-${t.id}">Upload completed copy</label>
+          <input id="template-upload-${t.id}" type="file" class="form-control" ${canEdit ? '' : 'disabled'}
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            onchange="uploadFilledTemplate(${t.id}, this)">
+          ${filled ? `<div class="upload-state"><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Current file: ${escapeHtml(filled.original_filename)} ${filled.is_draft ? '(draft)' : '(submitted)'}</div>` : ''}
         </div>
-        <label class="form-label small mb-1">Upload filled copy</label>
-        <input type="file" class="form-control" ${canEdit ? '' : 'disabled'}
-          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-          onchange="uploadFilledTemplate(${t.id}, this)">
-        ${filled ? `<div class="form-text">Current: ${escapeHtml(filled.original_filename)} ${filled.is_draft ? '(draft)' : '(submitted)'}</div>` : ''}
       </div>`;
     }).join('');
   } catch (err) {
-    el.innerHTML = `<span class="text-danger">${err.message}</span>`;
+    el.innerHTML = `<div class="empty-state"><div><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><strong>Unable to load forms</strong><span>${escapeHtml(err.message)}</span></div></div>`;
   }
 }
 
@@ -55,22 +62,28 @@ async function refreshStatus() {
   try {
     const res = await api('/client/status');
     const s = res.data;
+    const percent = s.totalDocuments ? Math.round((s.documentsSubmitted / s.totalDocuments) * 100) : 0;
+    const progressBar = document.getElementById('submission-progress-bar');
+    const progressCount = document.getElementById('submission-progress-count');
+    const progressDescription = document.getElementById('submission-progress-description');
+    if (progressBar) {
+      requestAnimationFrame(() => { progressBar.style.width = `${percent}%`; });
+      progressBar.setAttribute('aria-valuenow', String(percent));
+    }
+    if (progressCount) progressCount.textContent = `${percent}% complete`;
+    if (progressDescription) progressDescription.textContent = `${s.documentsSubmitted} of ${s.totalDocuments} required documents saved or submitted`;
     el.innerHTML = `
-      <div class="mb-3">${statusBadge(s.status)}</div>
-      <ul class="list-unstyled mb-3">
-        <li>Onboarding form: ${s.onboardingStatus}</li>
-        <li>Documents: ${s.documentsSubmitted} / ${s.totalDocuments} submitted</li>
-      </ul>
-      ${s.rejectionReason ? `<div class="alert alert-danger">Rejection reason: ${escapeHtml(s.rejectionReason)}</div>` : ''}
-      ${s.canEdit ? '<p class="text-muted mb-0">You can edit and resubmit your forms.</p>' : '<p class="text-muted mb-0">Your submission is locked pending review.</p>'}
+      <div>${statusBadge(s.status)}</div>
+      <div class="status-overview">
+        <div class="status-detail"><span>Onboarding form</span><strong>${escapeHtml(s.onboardingStatusLabel || s.onboardingStatus)}</strong></div>
+        <div class="status-detail"><span>Supporting documents</span><strong>${s.documentsSubmitted} / ${s.totalDocuments} submitted</strong></div>
+      </div>
+      ${s.rejectionReason ? `<div class="form-note" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><span><strong>Revision requested</strong><br>${escapeHtml(s.rejectionReason)}</span></div>` : ''}
+      <p class="text-muted mb-0 small">${s.canEdit ? 'Your workspace is open. Save your progress anytime, then submit when every required item is ready.' : 'Your submission is locked while it is being reviewed. You will be notified if changes are needed.'}</p>
     `;
   } catch (err) {
-    el.innerHTML = `<span class="text-danger">${err.message}</span>`;
+    el.innerHTML = `<div class="empty-state"><div><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i><strong>Unable to load status</strong><span>${escapeHtml(err.message)}</span></div></div>`;
   }
-}
-
-function escapeHtml(str) {
-  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 window.refreshStatus = refreshStatus;
