@@ -60,11 +60,95 @@
       </section>
     </main>
   </div>
+
+  <!-- Welcome Modal -->
+  <div class="welcome-modal-backdrop" id="welcomeBackdrop">
+    <div class="welcome-modal" id="welcomeModal">
+      <div class="welcome-modal-header">
+        <button class="welcome-modal-close" id="welcomeClose" aria-label="Close welcome modal">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+        <div class="welcome-modal-icon">
+          <img src="/client-portal/public/logo.png" alt="AccessDigital">
+        </div>
+        <h2 class="welcome-modal-title">Welcome to AccessDigital Client Portal!</h2>
+        <p class="welcome-modal-subtitle">Let's get you started with a quick tour of your workspace.</p>
+      </div>
+
+      <div class="welcome-modal-body">
+        <!-- Walkthrough Steps -->
+        <div class="welcome-steps-container">
+          <h3 class="welcome-steps-title">Quick Start Guide</h3>
+          
+          <div class="welcome-step active" data-step="1">
+            <div class="welcome-step-content">
+              <div class="welcome-step-number">1</div>
+              <div class="welcome-step-text">
+                <h4>Complete Your Onboarding Form</h4>
+                <p>Fill in your company details, business information, and authorized declaration. Your progress is automatically saved as a draft.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcome-step" data-step="2">
+            <div class="welcome-step-content">
+              <div class="welcome-step-number">2</div>
+              <div class="welcome-step-text">
+                <h4>Download & Upload Documents</h4>
+                <p>Access assigned forms, complete them offline, and upload the finished copies along with any required supporting documents.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcome-step" data-step="3">
+            <div class="welcome-step-content">
+              <div class="welcome-step-number">3</div>
+              <div class="welcome-step-text">
+                <h4>Track Your Progress</h4>
+                <p>Monitor your submission status in real-time. You'll see when your documents are under review or approved.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcome-step" data-step="4">
+            <div class="welcome-step-content">
+              <div class="welcome-step-number">
+                <i class="fa-solid fa-check" aria-hidden="true"></i>
+              </div>
+              <div class="welcome-step-text">
+                <h4>You're All Set!</h4>
+                <p>Your secure workspace is ready. Need help? Look for the assistance panel in the sidebar, or reach out to our support team anytime.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcome-progress">
+            <div class="welcome-progress-dot active" data-dot="1"></div>
+            <div class="welcome-progress-dot" data-dot="2"></div>
+            <div class="welcome-progress-dot" data-dot="3"></div>
+            <div class="welcome-progress-dot" data-dot="4"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-modal-footer">
+        <button type="button" class="btn welcome-skip-btn" id="welcomeSkip">
+          Skip Tour
+        </button>
+        <button type="button" class="btn btn-primary welcome-continue-btn" id="welcomeContinue">
+          <span id="continueText">Continue</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/client-portal/public/js/api.js"></script>
   <script src="/client-portal/public/js/portal.js"></script>
   <script src="/client-portal/public/js/client/onboarding.js"></script>
   <script src="/client-portal/public/js/client/documents.js"></script>
   <script src="/client-portal/public/js/client/dashboard.js"></script>
+  <script src="/client-portal/public/js/welcome-modal.js"></script>
 </body>
 </html>

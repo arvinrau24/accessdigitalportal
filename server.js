@@ -6,7 +6,9 @@ const config = require('./src/config');
 const { ensureDir } = require('./src/utils/fileHelpers');
 
 const authRoutes = require('./src/routes/auth');
+const supportRoutes = require('./src/routes/support');
 const adminClientsRoutes = require('./src/routes/admin/clients');
+const adminSupportRoutes = require('./src/routes/admin/support');
 const adminTemplatesRoutes = require('./src/routes/admin/templates');
 const adminReviewRoutes = require('./src/routes/admin/review');
 const clientOnboardingRoutes = require('./src/routes/client/onboarding');
@@ -55,7 +57,9 @@ app.get(`${BASE}/admin/clients/:id`, (req, res) => {
 });
 
 app.use(`${BASE}/api/auth`, authRoutes);
+app.use(`${BASE}/api/support`, supportRoutes);
 app.use(`${BASE}/api/admin/clients`, adminClientsRoutes);
+app.use(`${BASE}/api/admin/support-requests`, adminSupportRoutes);
 app.use(`${BASE}/api/admin/templates`, adminTemplatesRoutes);
 app.use(`${BASE}/api/admin`, adminReviewRoutes);
 app.use(`${BASE}/api/client/onboarding`, clientOnboardingRoutes);

@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS clients (
   client_type ENUM('A','B') NOT NULL,
   commercial_mode ENUM('Outright Purchase','Lease to Own','Rent') NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
+  auth_version INT NOT NULL DEFAULT 0,
   status ENUM('pending_onboarding','draft','submitted','approved','rejected') DEFAULT 'pending_onboarding',
   rejection_reason TEXT NULL,
   created_by INT,
@@ -79,4 +80,26 @@ CREATE TABLE IF NOT EXISTS review_log (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
   FOREIGN KEY (admin_id) REFERENCES admins(id)
+);
+
+CREATE TABLE IF NOT EXISTS support_requests (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  request_type ENUM('password_reset','general_support') NOT NULL,
+  company_name VARCHAR(255) NOT NULL,
+  account_identifier VARCHAR(150) NOT NULL,
+  message TEXT NULL,
+  client_id INT NULL,
+  status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+  admin_notes TEXT NULL,
+  resolved_by INT NULL,
+  resolved_at DATETIME NULL,
+  password_reset_by INT NULL,
+  password_reset_at DATETIME NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL,
+  FOREIGN KEY (resolved_by) REFERENCES admins(id) ON DELETE SET NULL,
+  FOREIGN KEY (password_reset_by) REFERENCES admins(id) ON DELETE SET NULL,
+  INDEX idx_support_requests_status_created (status, created_at),
+  INDEX idx_support_requests_client_id (client_id)
 );

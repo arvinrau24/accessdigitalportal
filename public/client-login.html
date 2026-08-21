@@ -13,76 +13,658 @@
   html, body { height: 100%; overflow: hidden; }
   body { font-family: 'Inter', sans-serif; }
 
-  .login-page { height: 100vh; height: 100dvh; overflow: hidden; }
-  .login-panel {
-    height: 100%;
-    min-height: 0;
-    padding-top: clamp(0.75rem, 3vh, 2rem);
-    padding-bottom: clamp(0.75rem, 3vh, 2rem);
+  /* Keyframe Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .company-logo { height: clamp(3rem, 8vh, 5.5rem); }
-  .login-card { padding: clamp(1rem, 3vh, 2rem); }
-  .role-switcher { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25rem; padding: 0.25rem; background: #f1f5f9; border-radius: 0.75rem; margin-bottom: clamp(0.75rem, 2vh, 1.25rem); }
-  .role-tab { border: 0; border-radius: 0.55rem; padding: 0.6rem 0.75rem; background: transparent; color: #64748b; font-size: 0.8125rem; font-weight: 600; transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease; }
-  .role-tab:hover { color: #1a56c4; }
-  .role-tab[aria-pressed="true"] { background: #ffffff; color: #1a56c4; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
-  .role-tab:focus-visible { outline: 2px solid #1a56c4; outline-offset: 2px; }
-  .login-form > * + * { margin-top: clamp(0.65rem, 1.8vh, 1.25rem) !important; }
-  .login-input { padding-top: clamp(0.55rem, 1.8vh, 0.75rem); padding-bottom: clamp(0.55rem, 1.8vh, 0.75rem); }
-  .sign-in-button { padding-top: clamp(0.65rem, 2vh, 0.875rem); padding-bottom: clamp(0.65rem, 2vh, 0.875rem); }
-  .login-footer { padding-top: clamp(0.75rem, 2.5vh, 2rem); }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(26, 86, 196, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(26, 86, 196, 0.5), 0 0 30px rgba(26, 86, 196, 0.3); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+  @keyframes rotateIn {
+    from { opacity: 0; transform: rotate(-10deg) scale(0.9); }
+    to { opacity: 1; transform: rotate(0) scale(1); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
 
-  .hero-header { padding: clamp(1rem, 3vh, 2.5rem); }
-  .hero-content { padding-left: clamp(2rem, 5vw, 4rem); padding-right: clamp(2rem, 5vw, 4rem); }
-  .hero-title { font-size: clamp(2rem, 3.5vw, 3rem); }
-  .hero-description { margin-bottom: clamp(1rem, 3vh, 2rem); }
+  /* Base page - full viewport, relative positioning */
+  .login-page { 
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  /* Full-screen gate background - DESKTOP ONLY */
+  .gate-background-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: none; /* Hidden on mobile */
+  }
+
+  .gate-image-fullscreen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    animation: gateImageFadeIn 0.8s ease-out;
+  }
+
+  .gate-image-fullscreen.transitioning {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  @keyframes gateImageFadeIn {
+    from { opacity: 0; transform: scale(1.05); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Show gate background on desktop */
+  @media (min-width: 992px) {
+    .gate-background-fullscreen {
+      display: block;
+    }
+    .login-page {
+      background: transparent; /* Use gate image instead */
+    }
+  }
+
+  /* Login section - left side, floating */
+  .login-section {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+
+  @media (min-width: 992px) {
+    .login-section {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 600px;
+      padding: clamp(1rem, 4vh, 2.5rem) clamp(1.5rem, 3vw, 3rem);
+      justify-content: space-between;
+    }
+  }
+
+  .login-section-content {
+    width: 100%;
+    max-width: 440px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Login Card - ultra-light glassmorphism (shows company logo) */
+  .login-card { 
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    padding: clamp(1rem, 3vh, 2rem);
+    position: relative;
+    overflow: hidden;
+    animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Top light refraction */
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Left light refraction */
+  .login-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05),
+      transparent,
+      rgba(255, 255, 255, 0.05)
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .login-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Strong text shadows for readability on ultra-light background */
+  .login-card h1 {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+    text-shadow: 
+      0 2px 4px rgba(255, 255, 255, 0.95),
+      0 0 30px rgba(255, 255, 255, 0.9),
+      0 4px 8px rgba(255, 255, 255, 0.8);
+  }
+
+  .login-card label,
+  .login-card .text-slate-700 {
+    color: #1e293b !important;
+    font-weight: 700 !important;
+    text-shadow: 
+      0 1px 3px rgba(255, 255, 255, 0.9),
+      0 0 20px rgba(255, 255, 255, 0.8);
+  }
+
+  .login-card .text-slate-500 {
+    color: #334155 !important;
+    font-weight: 600 !important;
+    text-shadow: 
+      0 1px 2px rgba(255, 255, 255, 0.85),
+      0 0 15px rgba(255, 255, 255, 0.7);
+  }
+
+  .login-card .text-slate-900 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    text-shadow: 
+      0 2px 4px rgba(255, 255, 255, 0.95),
+      0 0 25px rgba(255, 255, 255, 0.85);
+  }
+
+  .login-card .text-slate-600 {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+
+  /* Fallback for browsers without backdrop-filter support */
+  @supports not (backdrop-filter: blur(0)) {
+    .login-card {
+      background: rgba(255, 255, 255, 0.30);
+    }
+  }
+
+  @keyframes cardSlideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px) scale(0.96); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0) scale(1); 
+    }
+  }
+
+  /* Login Card Header */
+  .login-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    animation: slideIn 0.6s ease-out 0.2s both;
+  }
+  .login-card-header-text { flex: 1; }
+  .company-logo-small {
+    height: clamp(2.5rem, 6vh, 4rem);
+    width: auto;
+    animation: rotateIn 0.8s ease-out 0.4s both;
+    transition: transform 0.3s ease;
+  }
+  .company-logo-small:hover { transform: scale(1.05) rotate(2deg); }
+
+  /* Login footer */
+  .login-footer {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  /* Animated Portal Switcher - ultra-light glassmorphism */
+  .portal-switcher-container {
+    margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
+    animation: slideIn 0.7s ease-out 0.1s both;
+  }
+  .portal-switcher {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    background: rgba(241, 245, 249, 0.08);
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    padding: 0.35rem;
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  .portal-switcher-indicator {
+    position: absolute;
+    top: 0.35rem;
+    left: 0.35rem;
+    width: calc(50% - 0.35rem);
+    height: calc(100% - 0.7rem);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15), 0 1px 3px rgba(15, 23, 42, 0.1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 1;
+  }
+  .portal-switcher-indicator.admin {
+    transform: translateX(calc(100% + 0.35rem));
+  }
+  .portal-tab {
+    position: relative;
+    z-index: 2;
+    border: 0;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #000000;
+    transition: all 0.3s ease;
+  }
+  .portal-tab:hover { color: #1a56c4; }
+  .portal-tab[aria-pressed="true"] { color: #1a56c4; }
+  .portal-tab:focus-visible { outline: 2px solid #1a56c4; outline-offset: 2px; }
+
+  /* Form Animations */
+  .login-form { animation: fadeIn 0.8s ease-out 0.4s both; }
+  .login-form > * + * { margin-top: clamp(0.65rem, 1.8vh, 1.25rem) !important; }
+  .form-group { animation: slideIn 0.6s ease-out calc(0.5s + var(--delay, 0s)) both; }
+  
+  /* Input fields - more opaque for usability */
+  .login-input { 
+    padding-top: clamp(0.55rem, 1.8vh, 0.75rem); 
+    padding-bottom: clamp(0.55rem, 1.8vh, 0.75rem);
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+    color: #0f172a !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .login-input::placeholder {
+    color: #64748b;
+    font-weight: 500;
+  }
+  .login-input:focus {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: #1a56c4 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 86, 196, 0.15), 0 0 0 3px rgba(26, 86, 196, 0.1);
+  }
+
+  /* Button Animations */
+  .sign-in-button { 
+    padding-top: clamp(0.65rem, 2vh, 0.875rem); 
+    padding-bottom: clamp(0.65rem, 2vh, 0.875rem);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .sign-in-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(26, 86, 196, 0.3);
+  }
+  .sign-in-button:active:not(:disabled) { transform: translateY(0); }
+  .sign-in-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  .sign-in-button:active:not(:disabled)::before {
+    width: 300px;
+    height: 300px;
+  }
+  .btn-link {
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+  .btn-link:hover {
+    transform: translateX(3px);
+    color: #1a56c4;
+  }
+
+  .remember-label span { color: #1a56c4 !important; }
+  .hero-section .text-adblue { color: #1a56c4 !important; }
+  .hero-section .text-green-700 { color: #15803d !important; }
+  .hero-section .text-black { color: #000000 !important; }
+
+  .support-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.56);
+    backdrop-filter: blur(4px);
+  }
+  .support-modal {
+    width: min(100%, 31rem);
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    border-radius: 1rem;
+    color: #0f172a;
+    background: #ffffff;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+  }
+  .support-modal-header { display: flex; gap: 1rem; align-items: flex-start; justify-content: space-between; }
+  .support-modal-title { margin: 0; color: #1a56c4; font-size: 1.25rem; font-weight: 800; }
+  .support-modal-description { margin: 0.4rem 0 0; color: #000000; font-size: 0.875rem; line-height: 1.5; }
+  .support-modal-close {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.6rem;
+    color: #334155;
+    background: #ffffff;
+  }
+  .support-modal-close:hover { color: #1a56c4; border-color: #1a56c4; background: #eff6ff; }
+  .support-modal-form { margin-top: 1.25rem; }
+  .support-modal-form label { display: block; margin-bottom: 0.4rem; color: #000000; font-size: 0.875rem; font-weight: 700; }
+  .support-modal-form input,
+  .support-modal-form textarea {
+    width: 100%;
+    padding: 0.72rem 0.85rem;
+    border: 1px solid #94a3b8;
+    border-radius: 0.65rem;
+    color: #0f172a;
+    background: #ffffff;
+  }
+  .support-modal-form textarea { min-height: 6.5rem; resize: vertical; }
+  .support-modal-form input:focus,
+  .support-modal-form textarea:focus { outline: 3px solid rgba(26, 86, 196, 0.2); border-color: #1a56c4; }
+  .support-form-row + .support-form-row { margin-top: 1rem; }
+  .support-form-note { margin: 0.75rem 0 0; color: #000000; font-size: 0.78rem; line-height: 1.45; }
+  .support-form-message { margin-top: 1rem; padding: 0.75rem; border: 1px solid #fecaca; border-radius: 0.65rem; color: #b91c1c; background: #fff1f2; font-size: 0.82rem; }
+  .support-modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem; }
+  .support-cancel-button { padding: 0.7rem 0.9rem; border: 1px solid #94a3b8; border-radius: 0.65rem; color: #0f172a; background: #ffffff; font-weight: 700; }
+  .support-submit-button { padding: 0.7rem 1rem; border: 0; border-radius: 0.65rem; color: #ffffff; background: #1a56c4; font-weight: 700; }
+  .support-submit-button:disabled { cursor: not-allowed; opacity: 0.65; }
+  .login-footer { 
+    padding-top: clamp(0.75rem, 2.5vh, 2rem);
+    animation: fadeIn 1s ease-out 0.6s both;
+  }
+  
+  /* Footer text - pure black with white glow */
+  .login-footer,
+  .login-footer span,
+  .login-footer a {
+    color: #000000 !important;
+    text-shadow: 
+      0 1px 3px rgba(255, 255, 255, 0.9),
+      0 0 15px rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+  }
+  
+  .login-footer a {
+    transition: all 0.3s ease;
+  }
+  
+  .login-footer a:hover {
+    color: #1a56c4 !important;
+    text-decoration: underline;
+    text-shadow: 
+      0 1px 3px rgba(255, 255, 255, 0.9),
+      0 0 20px rgba(26, 86, 196, 0.3);
+  }
+
+  /* Hero section - right side, overlaid on gate */
+  .hero-section {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 600px;
+    z-index: 5;
+    display: none; /* Hidden on mobile */
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none; /* Allow clicks through transparent areas */
+  }
+
+  .hero-section > * {
+    pointer-events: auto; /* Re-enable clicks on content */
+  }
+
+  @media (min-width: 992px) {
+    .hero-section {
+      display: flex;
+    }
+  }
+
+  /* Hero Section Animations */
+  .hero-header { 
+    padding: clamp(1rem, 3vh, 2.5rem);
+    animation: fadeIn 0.8s ease-out 0.5s both;
+  }
+  
+  /* Hero Header Badge Slide Animation */
+  .hero-header-badge {
+    animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both;
+  }
+  
+  .hero-content { 
+    padding-left: clamp(2rem, 5vw, 4rem); 
+    padding-right: clamp(2rem, 5vw, 4rem);
+  }
+  .hero-title { 
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    animation: slideInRight 0.8s ease-out 0.6s both;
+  }
+  .hero-description { 
+    margin-bottom: clamp(1rem, 3vh, 2rem);
+    animation: fadeIn 0.8s ease-out 0.7s both;
+  }
   .hero-features { gap: clamp(0.75rem, 2vh, 1.25rem); }
-  .hero-footer { padding-left: clamp(2rem, 5vw, 4rem); padding-right: clamp(2rem, 5vw, 4rem); padding-bottom: clamp(1rem, 3vh, 2rem); }
-  .hero-footer-card { padding: clamp(1rem, 2.5vh, 1.5rem) clamp(1.25rem, 3vw, 2rem); }
+  .hero-feature-item {
+    animation: slideInRight 0.6s ease-out calc(0.8s + var(--delay, 0s)) both;
+    transition: transform 0.3s ease;
+  }
+  .hero-feature-item:hover { transform: translateX(5px); }
+
+  .hero-footer { 
+    padding-left: clamp(2rem, 5vw, 4rem); 
+    padding-right: clamp(2rem, 5vw, 4rem); 
+    padding-bottom: clamp(1rem, 3vh, 2rem);
+    animation: fadeIn 0.8s ease-out 1s both;
+  }
+  .hero-footer-card { 
+    padding: clamp(1rem, 2.5vh, 1.5rem) clamp(1.25rem, 3vw, 2rem);
+    transition: all 0.3s ease;
+  }
+  .hero-footer-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Password Toggle Animation */
+  #toggle-password { transition: all 0.3s ease; }
+  #toggle-password:hover {
+    transform: scale(1.1);
+    color: #1a56c4;
+  }
+
+  /* Error Message Animation */
+  .error-message { animation: shake 0.5s ease-in-out, fadeIn 0.3s ease-out; }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 
   @media (max-height: 560px) {
-    .login-panel { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-    .company-logo { height: 2.5rem; }
+    .login-section { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .company-logo-small { height: 2rem; }
     .login-card { padding: 0.75rem 1rem; }
     .login-card h1 { font-size: 1.25rem; }
     .login-card > p { margin-bottom: 0.75rem; font-size: 0.875rem; }
-    .role-switcher { margin-bottom: 0.5rem; }
-    .role-tab { padding: 0.45rem 0.6rem; font-size: 0.75rem; }
+    .portal-switcher-container { margin-bottom: 0.5rem; }
+    .portal-tab { padding: 0.45rem 0.6rem; font-size: 0.75rem; }
     .login-form > * + * { margin-top: 0.5rem !important; }
     .login-card label, .login-card input, .login-card .text-sm { font-size: 0.8125rem; }
     .login-footer { padding-top: 0.5rem; font-size: 0.6875rem; }
     .hero-content { transform: scale(0.88); transform-origin: center; }
     .hero-header, .hero-footer { transform: scale(0.9); transform-origin: top right; }
   }
+
+  /* Mobile-specific styles */
+  @media (max-width: 991.98px) {
+    .login-page {
+      background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%) !important;
+    }
+    
+    .gate-background-fullscreen {
+      display: none !important;
+    }
+    
+    .hero-section {
+      display: none !important;
+    }
+    
+    .login-section {
+      width: 100%;
+      position: relative;
+      left: auto;
+      right: auto;
+    }
+
+    /* Make login card more opaque on mobile */
+    .login-card {
+      background: rgba(255, 255, 255, 0.95) !important;
+    }
+
+    .portal-switcher {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      backdrop-filter: none;
+      border: none;
+    }
+  }
 </style>
 </head>
 <body class="bg-white">
-  <div class="login-page w-full flex flex-col lg:flex-row">
+  <div class="login-page">
+    <!-- Full-screen gate background (desktop only) -->
+    <div class="gate-background-fullscreen">
+      <img id="gate-background-full" 
+           src="/client-portal/public/open gate.png"
+           alt="Portal Access Gate"
+           class="gate-image-fullscreen">
+    </div>
 
-    <!-- Left panel: login -->
-    <div class="login-panel w-full lg:w-[520px] shrink-0 overflow-hidden bg-gradient-to-b from-sky-50 to-white flex flex-col px-6 sm:px-10">
-      <a href="/client-portal/" class="flex max-w-md mx-auto w-full shrink-0 justify-center focus:outline-none focus:ring-2 focus:ring-adblue rounded-lg">
-        <img src="/client-portal/public/logo.png" alt="Access Digital — Intelligence behind every access" class="company-logo block w-auto">
-      </a>
+    <!-- Login section (left side) -->
+    <div class="login-section">
+      <div class="login-section-content">
+        <div class="login-card">
+          <!-- Header with Logo -->
+          <div class="login-card-header">
+            <div class="login-card-header-text">
+              <h1 class="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
+              <p id="portal-description" class="text-slate-500">Sign in to your Client Portal</p>
+            </div>
+          </div>
 
-      <div class="max-w-md mx-auto w-full flex-1 min-h-0 flex items-center">
-        <div class="login-card w-full bg-white rounded-2xl shadow-lg shadow-slate-200/60 border border-slate-100">
-          <h1 class="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
-          <p id="portal-description" class="text-slate-500 mb-6">Sign in to your Client Portal</p>
-
-          <div class="role-switcher" role="group" aria-label="Select portal type">
-            <button type="button" class="role-tab" data-role="client" aria-pressed="true">Client Portal</button>
-            <button type="button" class="role-tab" data-role="admin" aria-pressed="false">Admin Portal</button>
+          <!-- Animated Portal Switcher -->
+          <div class="portal-switcher-container" role="group" aria-label="Select portal type">
+            <div class="portal-switcher">
+              <div class="portal-switcher-indicator" id="portal-indicator"></div>
+              <button type="button" class="portal-tab" data-role="client" aria-pressed="true">
+                <span>Client Portal</span>
+              </button>
+              <button type="button" class="portal-tab" data-role="admin" aria-pressed="false">
+                <span>Admin Portal</span>
+              </button>
+            </div>
           </div>
 
           <div id="login-message" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm" role="alert"></div>
 
           <form id="login-form" class="login-form space-y-5" novalidate>
-            <div>
+            <div class="form-group" style="--delay: 0s">
               <label id="identity-label" for="identity-input" class="block text-sm font-semibold text-slate-700 mb-2">Client ID</label>
               <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
-                  <i id="identity-icon" class="fa-regular fa-user"></i>
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-10" aria-hidden="true">
+                  <i id="identity-icon" class="fa-solid fa-user" style="display: inline-block; font-size: 1rem;"></i>
                 </span>
                 <input type="text" id="identity-input" name="clientLoginId" required autofocus autocomplete="username"
                   placeholder="Enter your client ID"
@@ -90,11 +672,11 @@
               </div>
             </div>
 
-            <div>
+            <div class="form-group" style="--delay: 0.1s">
               <label for="password-input" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
               <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
-                  <i class="fa-solid fa-lock"></i>
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-10" aria-hidden="true">
+                  <i class="fa-solid fa-lock" style="display: inline-block; font-size: 1rem;"></i>
                 </span>
                 <input type="password" id="password-input" name="password" required autocomplete="current-password"
                   placeholder="Enter your password"
@@ -106,12 +688,12 @@
               </div>
             </div>
 
-            <div class="flex items-center justify-between pt-1">
-              <label class="flex items-center gap-2 cursor-pointer select-none">
+            <div class="flex items-center justify-between pt-1 form-group" style="--delay: 0.2s">
+              <label class="remember-label flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-adblue focus:ring-adblue">
                 <span class="text-sm text-slate-600">Remember me</span>
               </label>
-              <a href="#" class="text-sm font-medium text-adblue hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Forgot password?</a>
+              <button type="button" id="forgot-password-link" class="btn-link text-sm font-medium text-adblue hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Forgot password?</button>
             </div>
 
             <button type="submit" id="sign-in-btn"
@@ -129,13 +711,14 @@
             <div class="flex items-center justify-center gap-2 text-sm text-slate-500 pt-1">
               <i class="fa-solid fa-headset" aria-hidden="true"></i>
               <span>Need help?</span>
-              <a href="#" class="text-adblue font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Contact Support</a>
+              <button type="button" id="contact-support-link" class="text-adblue font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Contact Support</button>
             </div>
           </form>
         </div>
       </div>
 
-      <div class="login-footer max-w-md mx-auto w-full shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <!-- Login footer -->
+      <div class="login-footer flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
         <span class="text-center sm:text-left">© 2026 Access Digital Sdn Bhd. All rights reserved.</span>
         <div class="flex items-center gap-3">
           <a href="#" class="hover:text-adblue focus:outline-none focus:ring-2 focus:ring-adblue rounded">Privacy Policy</a>
@@ -145,90 +728,115 @@
       </div>
     </div>
 
-    <!-- Right panel: hero -->
-    <div class="relative flex-1 hidden lg:flex lg:flex-col overflow-hidden bg-gradient-to-br from-sky-50 via-blue-50 to-white">
-      <div class="absolute inset-0">
-        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_0a015f523f_7a9074e2247d6bc8.png"
-          alt="Modern office building with an automatic security barrier gate"
-          class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-r from-sky-50 via-sky-50/40 to-transparent"></div>
-      </div>
-
-      <div class="hero-header relative z-10 flex justify-end">
-        <div class="bg-white/90 backdrop-blur rounded-2xl shadow-md px-5 py-3 flex items-center gap-3">
+    <!-- Hero section (right side) -->
+    <div class="hero-section">
+      <div class="hero-header flex justify-end">
+        <div class="hero-header-badge bg-white/90 backdrop-blur rounded-2xl shadow-md px-5 py-3 flex items-center gap-3">
           <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue">
             <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
           </div>
           <div>
-            <div class="text-sm font-bold text-slate-800">Secure Client Portal</div>
-            <div class="text-xs text-slate-500">Your security is our priority</div>
+            <div class="text-sm font-bold text-green-700">Secure Client Portal</div>
+            <div class="text-xs text-black">Your security is our priority</div>
           </div>
         </div>
       </div>
 
-      <div class="hero-content relative z-10 flex-1 flex flex-col justify-center">
-        <div class="max-w-xl">
-          <h2 class="hero-title font-extrabold text-slate-800 leading-tight">Secure access.</h2>
-          <h2 class="hero-title font-extrabold text-adblue leading-tight mb-5">Seamless experience.</h2>
-          <p class="hero-description text-slate-500 text-lg max-w-md">Access your documents, submit files and track progress securely, anytime.</p>
+      <div class="hero-content flex-1 flex items-center">
+        <div>
+          <h2 class="hero-title font-bold text-adblue mb-3">Your Gateway to Seamless Collaboration</h2>
+          <p class="hero-description text-adblue text-lg max-w-md">Access your documents, submit files and track progress securely, anytime.</p>
+
           <div class="hero-features flex flex-col">
-            <div class="flex items-start gap-4">
+            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0s">
               <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-slate-800">Secure &amp; Encrypted</div>
-                <div class="text-sm text-slate-500">Your data is protected with industry-leading security.</div>
+                <div class="font-semibold text-green-700">Secure &amp; Encrypted</div>
+                <div class="text-sm text-black">Your data is protected with industry-leading security.</div>
               </div>
             </div>
-            <div class="flex items-start gap-4">
+            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0.1s">
               <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-slate-800">Document Submission</div>
-                <div class="text-sm text-slate-500">Upload and submit documents easily and securely.</div>
+                <div class="font-semibold text-green-700">Document Submission</div>
+                <div class="text-sm text-black">Upload and submit documents easily and securely.</div>
               </div>
             </div>
-            <div class="flex items-start gap-4">
+            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0.2s">
               <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-slate-800">Track &amp; Manage</div>
-                <div class="text-sm text-slate-500">Track the progress and status of your submissions.</div>
+                <div class="font-semibold text-green-700">Track &amp; Manage</div>
+                <div class="text-sm text-black">Track the progress and status of your submissions.</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="hero-footer relative z-10">
+      <div class="hero-footer">
         <div class="hero-footer-card bg-white/90 backdrop-blur rounded-2xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-solid fa-lock" aria-hidden="true"></i></div>
             <div>
-              <div class="font-semibold text-slate-800 text-sm">Your Security</div>
-              <div class="text-xs text-slate-500">Advanced security you can trust.</div>
+              <div class="font-semibold text-green-700 text-sm">Your Security</div>
+              <div class="text-xs text-black">Advanced security you can trust.</div>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-regular fa-clock" aria-hidden="true"></i></div>
             <div>
-              <div class="font-semibold text-slate-800 text-sm">Anytime Access</div>
-              <div class="text-xs text-slate-500">Access your portal anytime, anywhere.</div>
+              <div class="font-semibold text-green-700 text-sm">Anytime Access</div>
+              <div class="text-xs text-black">Access your portal anytime, anywhere.</div>
             </div>
           </div>
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
             <div>
-              <div class="font-semibold text-slate-800 text-sm">Dedicated Support</div>
-              <div class="text-xs text-slate-500">Our team is here to help you.</div>
+              <div class="font-semibold text-green-700 text-sm">Dedicated Support</div>
+              <div class="text-xs text-black">Our team is here to help you.</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div id="support-modal-backdrop" class="support-modal-backdrop hidden" aria-hidden="true">
+    <section class="support-modal" role="dialog" aria-modal="true" aria-labelledby="support-modal-title" aria-describedby="support-modal-description">
+      <div class="support-modal-header">
+        <div>
+          <h2 id="support-modal-title" class="support-modal-title">Request support</h2>
+          <p id="support-modal-description" class="support-modal-description">Provide your account details and our support team will follow up.</p>
+        </div>
+        <button type="button" id="support-modal-close" class="support-modal-close" aria-label="Close support request form"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <form id="support-request-form" class="support-modal-form" novalidate>
+        <div class="support-form-row">
+          <label for="support-company-name">Company name</label>
+          <input id="support-company-name" name="companyName" type="text" autocomplete="organization" maxlength="255" required>
+        </div>
+        <div class="support-form-row">
+          <label for="support-account-identifier">Client ID or account email</label>
+          <input id="support-account-identifier" name="accountIdentifier" type="text" autocomplete="username" maxlength="150" required>
+        </div>
+        <div id="support-message-row" class="support-form-row">
+          <label for="support-message">How can we help?</label>
+          <textarea id="support-message" name="message" maxlength="2000"></textarea>
+        </div>
+        <p id="support-password-note" class="support-form-note">For your security, never include your current or previous password.</p>
+        <div id="support-form-message" class="support-form-message hidden" role="alert"></div>
+        <div class="support-modal-actions">
+          <button type="button" id="support-cancel-button" class="support-cancel-button">Cancel</button>
+          <button type="submit" id="support-submit-button" class="support-submit-button">Send request</button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <script src="/client-portal/public/js/api.js"></script>
@@ -241,7 +849,17 @@
       const identityInput = document.getElementById('identity-input');
       const identityLabel = document.getElementById('identity-label');
       const identityIcon = document.getElementById('identity-icon');
+      const portalIndicator = document.getElementById('portal-indicator');
+      const gateBackground = document.getElementById('gate-background-full');
 
+      // Animate portal switcher indicator
+      if (isAdmin) {
+        portalIndicator.classList.add('admin');
+      } else {
+        portalIndicator.classList.remove('admin');
+      }
+
+      // Update text and form fields
       document.getElementById('portal-description').textContent = isAdmin
         ? 'Sign in to your Admin Portal'
         : 'Sign in to your Client Portal';
@@ -251,9 +869,25 @@
       identityIcon.classList.toggle('fa-user', !isAdmin);
       identityIcon.classList.toggle('fa-user-tie', isAdmin);
 
+      // Update button states
       document.querySelectorAll('[data-role]').forEach((button) => {
         button.setAttribute('aria-pressed', String(button.dataset.role === role));
       });
+
+      // Animate background gate image transition
+      if (gateBackground) {
+        gateBackground.classList.add('transitioning');
+        setTimeout(() => {
+          gateBackground.src = isAdmin 
+            ? '/client-portal/public/close gate.png'
+            : '/client-portal/public/open gate.png';
+          gateBackground.alt = isAdmin ? 'Admin Portal - Closed Gate' : 'Client Portal - Open Gate';
+          setTimeout(() => {
+            gateBackground.classList.remove('transitioning');
+          }, 50);
+        }, 300);
+      }
+
       setMessage('');
       identityInput.focus();
     }
@@ -273,6 +907,110 @@
       this.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password');
     });
 
+    const supportBackdrop = document.getElementById('support-modal-backdrop');
+    const supportForm = document.getElementById('support-request-form');
+    const supportTitle = document.getElementById('support-modal-title');
+    const supportDescription = document.getElementById('support-modal-description');
+    const supportMessageRow = document.getElementById('support-message-row');
+    const supportMessageInput = document.getElementById('support-message');
+    const supportPasswordNote = document.getElementById('support-password-note');
+    const supportFormMessage = document.getElementById('support-form-message');
+    const supportSubmitButton = document.getElementById('support-submit-button');
+    let supportRequestType = 'general_support';
+    let supportTrigger = null;
+
+    function setSupportFormMessage(text) {
+      supportFormMessage.textContent = text;
+      supportFormMessage.classList.toggle('hidden', !text);
+    }
+
+    function openSupportModal(type, trigger) {
+      supportRequestType = type;
+      supportTrigger = trigger;
+      const isPasswordReset = type === 'password_reset';
+      supportTitle.textContent = isPasswordReset ? 'Request a password reset' : 'Contact support';
+      supportDescription.textContent = isPasswordReset
+        ? 'Confirm the account details below. An administrator will verify the request and provide a temporary password through a secure channel.'
+        : 'Tell us how we can help and our support team will follow up.';
+      supportMessageRow.classList.toggle('hidden', isPasswordReset);
+      supportMessageInput.required = !isPasswordReset;
+      supportPasswordNote.classList.toggle('hidden', !isPasswordReset);
+      supportSubmitButton.textContent = isPasswordReset ? 'Request password reset' : 'Send request';
+      supportForm.reset();
+      setSupportFormMessage('');
+      supportBackdrop.classList.remove('hidden');
+      supportBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('support-company-name').focus(), 0);
+    }
+
+    function closeSupportModal() {
+      supportBackdrop.classList.add('hidden');
+      supportBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      supportTrigger?.focus();
+    }
+
+    function trapSupportModalFocus(event) {
+      if (event.key !== 'Tab' || supportBackdrop.classList.contains('hidden')) return;
+      const focusable = Array.from(supportBackdrop.querySelectorAll('button:not([disabled]), input:not([disabled]), textarea:not([disabled])'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.getElementById('forgot-password-link').addEventListener('click', (event) => openSupportModal('password_reset', event.currentTarget));
+    document.getElementById('contact-support-link').addEventListener('click', (event) => openSupportModal('general_support', event.currentTarget));
+    document.getElementById('support-modal-close').addEventListener('click', closeSupportModal);
+    document.getElementById('support-cancel-button').addEventListener('click', closeSupportModal);
+    supportBackdrop.addEventListener('click', (event) => {
+      if (event.target === supportBackdrop) closeSupportModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !supportBackdrop.classList.contains('hidden')) closeSupportModal();
+      trapSupportModalFocus(event);
+    });
+
+    supportForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setSupportFormMessage('');
+      const formData = new FormData(supportForm);
+      const companyName = String(formData.get('companyName') || '').trim();
+      const accountIdentifier = String(formData.get('accountIdentifier') || '').trim();
+      const message = String(formData.get('message') || '').trim();
+      if (!companyName || !accountIdentifier || (supportRequestType === 'general_support' && !message)) {
+        setSupportFormMessage('Please complete all required fields.');
+        return;
+      }
+
+      supportSubmitButton.disabled = true;
+      const originalLabel = supportSubmitButton.textContent;
+      supportSubmitButton.textContent = 'Sending…';
+      try {
+        const result = await api('/support/requests', {
+          method: 'POST',
+          body: { requestType: supportRequestType, companyName, accountIdentifier, message },
+          skipAuthRedirect: true,
+        });
+        closeSupportModal();
+        setMessage(result.message || 'Your request has been received. Our support team will be in touch.');
+        const loginMessage = document.getElementById('login-message');
+        loginMessage.className = 'mb-4 rounded-xl border px-4 py-3 text-sm bg-green-50 border-green-200 text-green-800';
+      } catch (err) {
+        setSupportFormMessage(err.message || 'Unable to send your request. Please try again.');
+      } finally {
+        supportSubmitButton.disabled = false;
+        supportSubmitButton.textContent = originalLabel;
+      }
+    });
+
     function setMessage(text) {
       const el = document.getElementById('login-message');
       if (!text) {
@@ -281,7 +1019,7 @@
         return;
       }
       el.textContent = text;
-      el.className = 'mb-4 rounded-xl border px-4 py-3 text-sm bg-red-50 border-red-100 text-red-600';
+      el.className = 'error-message mb-4 rounded-xl border px-4 py-3 text-sm bg-red-50 border-red-100 text-red-600';
     }
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {

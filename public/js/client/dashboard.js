@@ -4,9 +4,65 @@
   document.getElementById('nav-company').textContent = user.companyName || 'Client Dashboard';
   document.getElementById('client-company-name').textContent = user.companyName || 'Your company';
   document.getElementById('client-initial').textContent = (user.companyName || 'C').slice(0, 1).toUpperCase();
+  
+  // Initialize sidebar navigation to work with Bootstrap tabs
+  initializeSidebarNavigation();
+  
   loadDownloads();
   refreshStatus();
 })();
+
+/**
+ * Make sidebar navigation buttons work with Bootstrap tabs
+ */
+function initializeSidebarNavigation() {
+  const sidebarButtons = document.querySelectorAll('.portal-nav-link[data-bs-toggle="tab"]');
+  const mainTabs = document.querySelectorAll('.portal-tabs button[data-bs-toggle="tab"]');
+  
+  sidebarButtons.forEach(sidebarBtn => {
+    sidebarBtn.addEventListener('click', function(e) {
+      const targetId = this.getAttribute('data-bs-target');
+      
+      // Find matching main tab and trigger Bootstrap tab
+      const matchingTab = Array.from(mainTabs).find(tab => 
+        tab.getAttribute('data-bs-target') === targetId
+      );
+      
+      if (matchingTab) {
+        // Use Bootstrap Tab API to switch tabs
+        const bsTab = new bootstrap.Tab(matchingTab);
+        bsTab.show();
+      }
+      
+      // Update sidebar active states
+      sidebarButtons.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Update aria-selected attributes
+      sidebarButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+      this.setAttribute('aria-selected', 'true');
+    });
+  });
+  
+  // Sync main tabs back to sidebar when main tabs are clicked
+  mainTabs.forEach(mainTab => {
+    mainTab.addEventListener('shown.bs.tab', function(e) {
+      const targetId = this.getAttribute('data-bs-target');
+      const matchingSidebarBtn = Array.from(sidebarButtons).find(btn => 
+        btn.getAttribute('data-bs-target') === targetId
+      );
+      
+      if (matchingSidebarBtn) {
+        sidebarButtons.forEach(btn => btn.classList.remove('active'));
+        matchingSidebarBtn.classList.add('active');
+        
+        sidebarButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+        matchingSidebarBtn.setAttribute('aria-selected', 'true');
+      }
+    });
+  });
+}
+
 
 async function loadDownloads() {
   const el = document.getElementById('downloads-list');

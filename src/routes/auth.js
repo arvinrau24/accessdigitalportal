@@ -57,6 +57,7 @@ router.post('/client/login', loginLimiter, async (req, res) => {
       id: client.id,
       clientLoginId: client.client_login_id,
       companyName: client.company_name,
+      authVersion: client.auth_version || 0,
     });
     return res.json({
       success: true,

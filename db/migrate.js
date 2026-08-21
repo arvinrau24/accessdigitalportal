@@ -28,6 +28,10 @@ async function migrate(conn, database) {
     DEFAULT 'pending_onboarding'
   `);
 
+  if (!(await columnExists(conn, database, 'clients', 'auth_version'))) {
+    await conn.query('ALTER TABLE clients ADD COLUMN auth_version INT NOT NULL DEFAULT 0 AFTER password_hash');
+  }
+
   if (await tableExists(conn, database, 'templates')) {
     if (!(await columnExists(conn, database, 'templates', 'original_filename'))) {
       await conn.query('ALTER TABLE templates ADD COLUMN original_filename VARCHAR(255) NULL');
@@ -74,6 +78,30 @@ async function migrate(conn, database) {
       FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
       FOREIGN KEY (template_id) REFERENCES templates(id) ON DELETE CASCADE,
       UNIQUE KEY unique_client_template (client_id, template_id)
+    )
+  `);
+
+  await conn.query(`
+    CREATE TABLE IF NOT EXISTS support_requests (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      request_type ENUM('password_reset','general_support') NOT NULL,
+      company_name VARCHAR(255) NOT NULL,
+      account_identifier VARCHAR(150) NOT NULL,
+      message TEXT NULL,
+      client_id INT NULL,
+      status ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
+      admin_notes TEXT NULL,
+      resolved_by INT NULL,
+      resolved_at DATETIME NULL,
+      password_reset_by INT NULL,
+      password_reset_at DATETIME NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL,
+      FOREIGN KEY (resolved_by) REFERENCES admins(id) ON DELETE SET NULL,
+      FOREIGN KEY (password_reset_by) REFERENCES admins(id) ON DELETE SET NULL,
+      INDEX idx_support_requests_status_created (status, created_at),
+      INDEX idx_support_requests_client_id (client_id)
     )
   `);
 

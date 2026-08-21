@@ -8,4 +8,12 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = { loginLimiter };
+const supportRequestLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { success: false, error: 'Too many support requests. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+module.exports = { loginLimiter, supportRequestLimiter };
