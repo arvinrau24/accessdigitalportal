@@ -324,11 +324,11 @@
     gap: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #000000;
+    color: #000000 !important;
     transition: all 0.3s ease;
   }
-  .portal-tab:hover { color: #1a56c4; }
-  .portal-tab[aria-pressed="true"] { color: #1a56c4; }
+  .portal-tab:hover { color: #1a56c4 !important; }
+  .portal-tab[aria-pressed="true"] { color: #1a56c4 !important; }
   .portal-tab:focus-visible { outline: 2px solid #1a56c4; outline-offset: 2px; }
 
   /* Form Animations */
@@ -395,9 +395,16 @@
     color: #1a56c4;
   }
 
-  .remember-label span { color: #1a56c4 !important; }
+  .remember-label span {
+    color: #1a56c4 !important;
+    font-weight: 700 !important;
+    text-shadow: 
+      0 1px 3px rgba(255, 255, 255, 0.9),
+      0 0 20px rgba(255, 255, 255, 0.8) !important;
+  }
   .hero-section .text-adblue { color: #1a56c4 !important; }
   .hero-section .text-green-700 { color: #15803d !important; }
+  .hero-section .text-adgreen { color: #7ed321 !important; }
   .hero-section .text-black { color: #000000 !important; }
 
   .support-modal-backdrop {
@@ -410,6 +417,9 @@
     overflow-y: auto;
     background: rgba(15, 23, 42, 0.56);
     backdrop-filter: blur(4px);
+  }
+  .support-modal-backdrop.hidden {
+    display: none !important;
   }
   .support-modal {
     width: min(100%, 31rem);
@@ -642,6 +652,7 @@
               <h1 class="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
               <p id="portal-description" class="text-slate-500">Sign in to your Client Portal</p>
             </div>
+            <img src="/client-portal/public/logo.png" alt="AccessDigital" class="company-logo-small">
           </div>
 
           <!-- Animated Portal Switcher -->
@@ -730,18 +741,6 @@
 
     <!-- Hero section (right side) -->
     <div class="hero-section">
-      <div class="hero-header flex justify-end">
-        <div class="hero-header-badge bg-white/90 backdrop-blur rounded-2xl shadow-md px-5 py-3 flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-adblue">
-            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-          </div>
-          <div>
-            <div class="text-sm font-bold text-green-700">Secure Client Portal</div>
-            <div class="text-xs text-black">Your security is our priority</div>
-          </div>
-        </div>
-      </div>
-
       <div class="hero-content flex-1 flex items-center">
         <div>
           <h2 class="hero-title font-bold text-adblue mb-3">Your Gateway to Seamless Collaboration</h2>
@@ -753,7 +752,7 @@
                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-green-700">Secure &amp; Encrypted</div>
+                <div class="font-semibold text-adgreen">Secure &amp; Encrypted</div>
                 <div class="text-sm text-black">Your data is protected with industry-leading security.</div>
               </div>
             </div>
@@ -762,7 +761,7 @@
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-green-700">Document Submission</div>
+                <div class="font-semibold text-adblue">Document Submission</div>
                 <div class="text-sm text-black">Upload and submit documents easily and securely.</div>
               </div>
             </div>
@@ -771,7 +770,7 @@
                 <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
               </div>
               <div>
-                <div class="font-semibold text-green-700">Track &amp; Manage</div>
+                <div class="font-semibold text-adgreen">Track &amp; Manage</div>
                 <div class="text-sm text-black">Track the progress and status of your submissions.</div>
               </div>
             </div>
@@ -822,14 +821,17 @@
           <input id="support-company-name" name="companyName" type="text" autocomplete="organization" maxlength="255" required>
         </div>
         <div class="support-form-row">
-          <label for="support-account-identifier">Client ID or account email</label>
+          <label for="support-account-identifier" id="support-label-identifier">User name</label>
           <input id="support-account-identifier" name="accountIdentifier" type="text" autocomplete="username" maxlength="150" required>
         </div>
+        <div id="support-last-password-row" class="support-form-row hidden">
+          <label for="support-last-password">Last password</label>
+          <input id="support-last-password" name="lastPassword" type="password" maxlength="100">
+        </div>
         <div id="support-message-row" class="support-form-row">
-          <label for="support-message">How can we help?</label>
+          <label for="support-message" id="support-label-message">Description of what's the problem</label>
           <textarea id="support-message" name="message" maxlength="2000"></textarea>
         </div>
-        <p id="support-password-note" class="support-form-note">For your security, never include your current or previous password.</p>
         <div id="support-form-message" class="support-form-message hidden" role="alert"></div>
         <div class="support-modal-actions">
           <button type="button" id="support-cancel-button" class="support-cancel-button">Cancel</button>
@@ -913,7 +915,10 @@
     const supportDescription = document.getElementById('support-modal-description');
     const supportMessageRow = document.getElementById('support-message-row');
     const supportMessageInput = document.getElementById('support-message');
-    const supportPasswordNote = document.getElementById('support-password-note');
+    const supportLastPasswordRow = document.getElementById('support-last-password-row');
+    const supportLastPasswordInput = document.getElementById('support-last-password');
+    const supportLabelIdentifier = document.getElementById('support-label-identifier');
+    const supportLabelMessage = document.getElementById('support-label-message');
     const supportFormMessage = document.getElementById('support-form-message');
     const supportSubmitButton = document.getElementById('support-submit-button');
     let supportRequestType = 'general_support';
@@ -928,13 +933,42 @@
       supportRequestType = type;
       supportTrigger = trigger;
       const isPasswordReset = type === 'password_reset';
-      supportTitle.textContent = isPasswordReset ? 'Request a password reset' : 'Contact support';
+      supportTitle.textContent = isPasswordReset ? 'Contact Admin' : 'Contact Support';
       supportDescription.textContent = isPasswordReset
-        ? 'Confirm the account details below. An administrator will verify the request and provide a temporary password through a secure channel.'
-        : 'Tell us how we can help and our support team will follow up.';
-      supportMessageRow.classList.toggle('hidden', isPasswordReset);
-      supportMessageInput.required = !isPasswordReset;
-      supportPasswordNote.classList.toggle('hidden', !isPasswordReset);
+        ? 'Please enter your company name, username, and the last known password to request local administrator assistance.'
+        : 'Provide your company name, username, and a description of the issue below.';
+      
+      if (supportLabelIdentifier) {
+        supportLabelIdentifier.textContent = 'User name';
+      }
+
+      if (isPasswordReset) {
+        if (supportLastPasswordRow) supportLastPasswordRow.classList.remove('hidden');
+        if (supportLastPasswordInput) {
+          supportLastPasswordInput.required = true;
+          supportLastPasswordInput.disabled = false;
+        }
+        if (supportMessageRow) supportMessageRow.classList.add('hidden');
+        if (supportMessageInput) {
+          supportMessageInput.required = false;
+          supportMessageInput.disabled = true;
+        }
+      } else {
+        if (supportLastPasswordRow) supportLastPasswordRow.classList.add('hidden');
+        if (supportLastPasswordInput) {
+          supportLastPasswordInput.required = false;
+          supportLastPasswordInput.disabled = true;
+        }
+        if (supportMessageRow) supportMessageRow.classList.remove('hidden');
+        if (supportMessageInput) {
+          supportMessageInput.required = true;
+          supportMessageInput.disabled = false;
+        }
+        if (supportLabelMessage) {
+          supportLabelMessage.textContent = "Description of what's the problem";
+        }
+      }
+
       supportSubmitButton.textContent = isPasswordReset ? 'Request password reset' : 'Send request';
       supportForm.reset();
       setSupportFormMessage('');
@@ -984,8 +1018,12 @@
       const formData = new FormData(supportForm);
       const companyName = String(formData.get('companyName') || '').trim();
       const accountIdentifier = String(formData.get('accountIdentifier') || '').trim();
-      const message = String(formData.get('message') || '').trim();
-      if (!companyName || !accountIdentifier || (supportRequestType === 'general_support' && !message)) {
+      const lastPassword = String(formData.get('lastPassword') || '').trim();
+      const rawMessage = String(formData.get('message') || '').trim();
+
+      const message = supportRequestType === 'password_reset' ? lastPassword : rawMessage;
+
+      if (!companyName || !accountIdentifier || !message) {
         setSupportFormMessage('Please complete all required fields.');
         return;
       }
