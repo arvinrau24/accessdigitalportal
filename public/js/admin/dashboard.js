@@ -6,6 +6,41 @@
   if (adminName) adminName.textContent = user.username || 'Administrator';
   if (adminInitial) adminInitial.textContent = (user.username || 'A').slice(0, 1).toUpperCase();
 
+  // Handle navigation active state for hash links
+  const navLinks = document.querySelectorAll('.portal-nav-link');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      
+      // If this is a hash link on the same page
+      if (href && href.startsWith('#')) {
+        // Remove active from all nav links
+        navLinks.forEach(l => {
+          l.classList.remove('active');
+          l.removeAttribute('aria-current');
+        });
+        
+        // Add active to clicked link
+        this.classList.add('active');
+        this.setAttribute('aria-current', 'page');
+      }
+    });
+  });
+
+  // Check on page load if there's a hash in URL and update active state
+  if (window.location.hash) {
+    const hashLink = document.querySelector(`.portal-nav-link[href="${window.location.hash}"]`);
+    if (hashLink) {
+      navLinks.forEach(l => {
+        l.classList.remove('active');
+        l.removeAttribute('aria-current');
+      });
+      hashLink.classList.add('active');
+      hashLink.setAttribute('aria-current', 'page');
+    }
+  }
+
   document.querySelectorAll('.type-filter').forEach((btn) => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.type-filter').forEach((b) => {
@@ -29,6 +64,16 @@
   initializeSupportRequests();
 
   loadClients('');
+
+  // Handle hash navigation on page load (e.g., #support-requests)
+  if (window.location.hash === '#support-requests') {
+    setTimeout(() => {
+      const target = document.getElementById('support-requests');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 300);
+  }
 })();
 
 async function loadClients(typeFilter) {

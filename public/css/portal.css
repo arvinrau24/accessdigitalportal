@@ -93,24 +93,28 @@ a:hover { color: var(--ad-primary-dark); }
 
 .portal-brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.7rem;
+  justify-content: center;
+  gap: 0px;
   min-height: 48px;
-  padding: 0.25rem 0.7rem 1.35rem;
+  padding: 1rem 0.7rem 1.5rem;
   color: #fff;
+  text-align: center;
 }
 
 .portal-brand:hover { color: #fff; }
 
 .portal-brand img {
-  width: 70px;
-  height: 70px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
+  margin-top: -40px;
 }
 
 .portal-brand-copy { line-height: 1.1; }
-.portal-brand-name { display: block; font-size: 1.02rem; font-weight: 800; letter-spacing: -0.025em; }
-.portal-brand-role { display: block; margin-top: 0.2rem; color: #b8cff4; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.portal-brand-name { display: none; }
+.portal-brand-role { display: block; color: #b8cff4; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 
 .sidebar-section-label {
   margin: 1rem 0.7rem 0.45rem;
@@ -476,6 +480,10 @@ a:hover { color: var(--ad-primary-dark); }
 .type-filter:hover { border-color: #aac8fa; color: var(--ad-primary); background: #f8fbff; }
 .type-filter.filter-active,
 .type-filter.btn-primary { border-color: var(--ad-primary); color: #fff; background: var(--ad-primary); box-shadow: 0 5px 12px rgba(26, 86, 196, 0.18); }
+.support-filter { min-height: 34px; border: 1px solid var(--ad-line); border-radius: 999px; color: var(--ad-muted); background: #fff; box-shadow: none; }
+.support-filter:hover { border-color: #aac8fa; color: var(--ad-primary); background: #f8fbff; }
+.support-filter.filter-active,
+.support-filter.btn-primary { border-color: var(--ad-primary); color: #fff; background: var(--ad-primary); box-shadow: 0 5px 12px rgba(26, 86, 196, 0.18); }
 .search-field { position: relative; width: min(100%, 280px); }
 .search-field i { position: absolute; top: 50%; left: 0.8rem; z-index: 1; color: #8aa0ba; font-size: 0.76rem; transform: translateY(-50%); }
 .search-field .form-control { padding-left: 2.25rem; }
