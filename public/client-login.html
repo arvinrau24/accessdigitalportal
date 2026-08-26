@@ -183,8 +183,27 @@
     animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
+  /* Hero Info Card - matches login card styling */
+  .hero-info-card {
+    width: 100%;
+    max-width: 540px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    padding: clamp(1.5rem, 3vh, 2.5rem);
+    position: relative;
+    overflow: hidden;
+    animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  }
+
   /* Top light refraction */
-  .login-card::before {
+  .login-card::before,
+  .hero-info-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -202,7 +221,8 @@
   }
 
   /* Left light refraction */
-  .login-card::after {
+  .login-card::after,
+  .hero-info-card::after {
     content: '';
     position: absolute;
     top: 0;
@@ -219,13 +239,15 @@
     z-index: 1;
   }
 
-  .login-card > * {
+  .login-card > *,
+  .hero-info-card > * {
     position: relative;
     z-index: 2;
   }
 
   /* Strong text shadows for readability on ultra-light background */
-  .login-card h1 {
+  .login-card h1,
+  .hero-info-card h2 {
     color: #0f172a !important;
     font-weight: 800 !important;
     text-shadow: 
@@ -301,6 +323,14 @@
   }
   .company-logo-small:hover { transform: scale(1.05) rotate(2deg); }
 
+  /* Password toggle icon hover effect - properly preserve vertical centering */
+  #toggle-password {
+    transition: transform 0.2s ease;
+  }
+  #toggle-password:hover {
+    transform: translateY(-50%) scale(1.15);
+  }
+
   /* Login footer */
   .login-footer {
     width: 100%;
@@ -340,7 +370,7 @@
     z-index: 1;
   }
   .portal-switcher-indicator.admin {
-    transform: translateX(calc(100% + 0.35rem));
+    transform: translateX(calc(100% + 0.05rem));
   }
   .portal-tab {
     position: relative;
@@ -740,7 +770,7 @@
             <div class="flex items-center justify-between pt-1 form-group" style="--delay: 0.2s">
               <label class="remember-label flex items-center gap-2 cursor-pointer select-none">
                 <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-adblue focus:ring-adblue">
-                <span class="text-sm text-slate-600">Remember me</span>
+                <span class="text-sm text-adblue">Remember me</span>
               </label>
               <button type="button" id="forgot-password-link" class="btn-link text-sm font-medium text-adblue hover:underline focus:outline-none focus:ring-2 focus:ring-adblue rounded">Forgot password?</button>
             </div>
@@ -779,38 +809,33 @@
 
     <!-- Hero section (right side) -->
     <div class="hero-section">
-      <div class="hero-content flex-1 flex items-center">
-        <div>
-          <h2 class="hero-title font-bold text-adblue mb-3">Your Gateway to Seamless Collaboration</h2>
-          <p class="hero-description text-adblue text-lg max-w-md">Access your documents, submit files and track progress securely, anytime.</p>
+      <div class="hero-content flex-1 flex items-center justify-center">
+        <div class="hero-info-card">
+          <!-- Header -->
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-slate-900 mb-2">Your Gateway to Seamless Collaboration</h2>
+            <p class="text-slate-700 text-base">Access your documents, submit files and track progress securely, anytime.</p>
+          </div>
 
-          <div class="hero-features flex flex-col">
-            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0s">
-              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+          <!-- Main Features -->
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               </div>
-              <div>
-                <div class="font-semibold text-adgreen">Secure &amp; Encrypted</div>
-                <div class="text-sm text-black">Your data is protected with industry-leading security.</div>
-              </div>
+              <div class="font-semibold text-slate-900">Secure &amp; Encrypted</div>
             </div>
-            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0.1s">
-              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
               </div>
-              <div>
-                <div class="font-semibold text-adblue">Document Submission</div>
-                <div class="text-sm text-black">Upload and submit documents easily and securely.</div>
-              </div>
+              <div class="font-semibold text-slate-900">Document Submission</div>
             </div>
-            <div class="hero-feature-item flex items-start gap-4" style="--delay: 0.2s">
-              <div class="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-adblue shrink-0">
                 <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
               </div>
-              <div>
-                <div class="font-semibold text-adgreen">Track &amp; Manage</div>
-                <div class="text-sm text-black">Track the progress and status of your submissions.</div>
-              </div>
+              <div class="font-semibold text-slate-900">Track &amp; Manage</div>
             </div>
           </div>
         </div>
