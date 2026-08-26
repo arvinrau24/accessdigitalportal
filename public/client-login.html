@@ -99,6 +99,38 @@
     }
   }
 
+  /* Video overlay for gate opening animation */
+  .gate-video-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+  }
+
+  .gate-video-overlay.playing {
+    display: block;
+    opacity: 1;
+  }
+
+  .gate-video-overlay video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 1;
+  }
+
+  /* Keep login content visible during video */
+  .login-section.video-playing {
+    position: relative;
+  }
+
   /* Login section - left side, floating */
   .login-section {
     position: relative;
@@ -642,17 +674,23 @@
            class="gate-image-fullscreen">
     </div>
 
+    <!-- Video overlay for gate opening animation -->
+    <div class="gate-video-overlay" id="gate-video-overlay">
+      <video id="gate-opening-video" preload="auto" playsinline>
+        <source src="/client-portal/public/open_the_gate.mp4" type="video/mp4">
+      </video>
+    </div>
+
     <!-- Login section (left side) -->
     <div class="login-section">
       <div class="login-section-content">
         <div class="login-card">
-          <!-- Header with Logo -->
+          <!-- Header -->
           <div class="login-card-header">
             <div class="login-card-header-text">
               <h1 class="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
               <p id="portal-description" class="text-slate-500">Sign in to your Client Portal</p>
             </div>
-            <img src="/client-portal/public/logo.png" alt="AccessDigital" class="company-logo-small">
           </div>
 
           <!-- Animated Portal Switcher -->
@@ -843,6 +881,26 @@
 
   <script src="/client-portal/public/js/api.js"></script>
   <script>
+    // Reset video state on page load (fixes back button issue)
+    window.addEventListener('pageshow', function(event) {
+      const videoOverlay = document.getElementById('gate-video-overlay');
+      const video = document.getElementById('gate-opening-video');
+      const loginSection = document.querySelector('.login-section');
+      
+      if (videoOverlay) {
+        videoOverlay.classList.remove('playing');
+        videoOverlay.style.display = 'none';
+      }
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+      if (loginSection) {
+        loginSection.classList.remove('fading-out', 'video-playing');
+        loginSection.style.opacity = '1';
+      }
+    });
+
     let selectedRole = 'client';
 
     function selectRole(role) {
@@ -876,19 +934,8 @@
         button.setAttribute('aria-pressed', String(button.dataset.role === role));
       });
 
-      // Animate background gate image transition
-      if (gateBackground) {
-        gateBackground.classList.add('transitioning');
-        setTimeout(() => {
-          gateBackground.src = isAdmin 
-            ? '/client-portal/public/close gate.png'
-            : '/client-portal/public/open gate.png';
-          gateBackground.alt = isAdmin ? 'Admin Portal - Closed Gate' : 'Client Portal - Open Gate';
-          setTimeout(() => {
-            gateBackground.classList.remove('transitioning');
-          }, 50);
-        }, 300);
-      }
+      // Background gate image - always use open gate for both portals
+      // (Dynamic switching removed - both client and admin use open gate.png)
 
       setMessage('');
       identityInput.focus();
@@ -1080,15 +1127,53 @@
             : { clientLoginId: fd.get('clientLoginId'), password: fd.get('password') },
           skipAuthRedirect: true,
         });
-        window.location.href = isAdmin
+        
+        // Play gate opening video, then redirect
+        const dashboardUrl = isAdmin
           ? '/client-portal/admin/dashboard'
           : '/client-portal/client/dashboard';
+        
+        playGateVideoAndRedirect(dashboardUrl);
       } catch (err) {
         setMessage(err.message || 'Unable to sign in. Please check your details and try again.');
         btn.disabled = false;
         label.textContent = 'Sign in';
       }
     });
+
+    function playGateVideoAndRedirect(redirectUrl) {
+      const videoOverlay = document.getElementById('gate-video-overlay');
+      const video = document.getElementById('gate-opening-video');
+      const loginSection = document.querySelector('.login-section');
+
+      // Keep login section visible, add class to indicate video is playing
+      if (loginSection) {
+        loginSection.classList.add('video-playing');
+      }
+
+      // Show and play video immediately
+      videoOverlay.classList.add('playing');
+      videoOverlay.style.display = 'block';
+      
+      // Reset and play video
+      video.currentTime = 0;
+      video.play().catch((err) => {
+        console.error('Video playback failed:', err);
+        // If video fails, redirect immediately
+        window.location.href = redirectUrl;
+      });
+
+      // Redirect when video ends
+      video.addEventListener('ended', () => {
+        window.location.href = redirectUrl;
+      }, { once: true });
+
+      // Fallback: redirect after max 10 seconds if video doesn't end
+      setTimeout(() => {
+        if (video.paused || video.ended) return;
+        window.location.href = redirectUrl;
+      }, 10000);
+    }
   </script>
 </body>
 </html>
