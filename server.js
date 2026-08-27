@@ -32,6 +32,8 @@ const pageRoutes = [
   ['/admin/clients/new', 'admin/client-new.html'],
   ['/admin/templates', 'admin/templates.html'],
   ['/client/dashboard', 'client/dashboard.html'],
+  ['/privacy-policy', 'legal/privacy-policy.html'],
+  ['/terms-of-use', 'legal/terms-of-use.html'],
 ];
 
 app.get(`${BASE}/`, (req, res) => {
