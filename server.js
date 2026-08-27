@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const config = require('./src/config');
 const { ensureDir } = require('./src/utils/fileHelpers');
 
+app.set('trust proxy', 1);
+
 const authRoutes = require('./src/routes/auth');
 const supportRoutes = require('./src/routes/support');
 const adminClientsRoutes = require('./src/routes/admin/clients');
